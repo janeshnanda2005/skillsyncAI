@@ -1,20 +1,40 @@
 from pydantic import BaseModel
 from typing import Optional
 
-class UpdateStudent(BaseModel):
-    name: Optional[str] = None
-    age: Optional[int] = None
-    dept:Optional[str] = None
+class Certification(BaseModel):
+    cert_id:int
+    sid:int
+    title:str
 
-class GetStudent(BaseModel):
-    name : Optional[str] = None
+
+class LoginRequest(BaseModel):
+    email:str
+    password:str 
+
+class RegisterRequest(BaseModel):
+    name:str
+    email:str
+    password:str
+    correct_password:str
+
+
+class Skills(BaseModel):
+    skill_id:int
+    sid:int
+    title:str
 
 class Student(BaseModel):
     sid: int
     name: str
-    age: int
     dept: str
+    email: str
+    year:int
+    cgpa:float
+    domain:str
 
-class LoginRequest(BaseModel):
-    username:str
-    password:str
+
+class Project(BaseModel):
+    pid:int
+    sid:int
+    title:str
+    description:str

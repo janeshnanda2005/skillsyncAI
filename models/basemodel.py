@@ -15,6 +15,14 @@ class Student(Base):
     domain = Column(String(50),nullable=False)
     created_at = Column(DateTime,nullable=False,server_default="now()")
 
+class User(Base):
+    __tablename__ = "users"
+
+    uid = Column(Integer, primary_key=True)
+    name = Column(String(50), nullable=False)
+    email = Column(String(50),unique=True,nullable=False)
+    password = Column(String(100),nullable=False)
+    created_at = Column(DateTime,nullable=False,server_default="now()")
 
 class Project(Base):
     __tablename__ = "projects"
@@ -25,6 +33,7 @@ class Project(Base):
     description = Column(String(500),nullable=False)
 
 class Skills(Base):
+    
     __tablename__ = "skills"
 
     
@@ -33,6 +42,7 @@ class Skills(Base):
     title = Column(String(50),nullable=False)
 
 class certification(Base):
+
     __tablename__ = "certifications"
 
     
