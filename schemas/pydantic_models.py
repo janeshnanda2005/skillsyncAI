@@ -6,6 +6,10 @@ class Certification(BaseModel):
     sid:int
     title:str
 
+class Item(BaseModel):
+    title : Optional[str] = None
+    description : Optional[str] = None
+    price : Optional[float] = None
 
 class LoginRequest(BaseModel):
     email:str
@@ -25,13 +29,13 @@ class Skills(BaseModel):
     title:str
 
 class Student(BaseModel):
-    sid: int
-    name: str
-    dept: str
-    email: str
-    year:int
-    cgpa:float
-    domain:str
+    sid : optional[int] = None
+    name : optional[str] = None
+    dept : optional[str] = None
+    email : optional[str] = None
+    year : optional[int] = None
+    cgpa : optional[float] = None
+    domain : optional[str] = None
 
 
 class Project(BaseModel):

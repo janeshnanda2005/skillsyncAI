@@ -24,6 +24,15 @@ class User(Base):
     password = Column(String(100),nullable=False)
     created_at = Column(DateTime,nullable=False,server_default="now()")
 
+class Admin(Base):
+    __tablename__ = "admin"
+
+    aid = Column(Integer,primary_key=True)
+    name = Column(String(50),nullable=False)
+    email = Column(String(50),unique=True,nullable=False)
+    password = Column(String(100),nullable=False)
+    created_at = Column(Datetime,nullable=False,server_default="now()")
+
 class Project(Base):
     __tablename__ = "projects"
 
