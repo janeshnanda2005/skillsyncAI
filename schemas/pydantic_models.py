@@ -12,6 +12,7 @@ class LoginRequest(BaseModel):
     password:str 
 
 class RegisterRequest(BaseModel):
+    uid:int 
     name:str
     email:str
     password:str
