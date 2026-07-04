@@ -1,7 +1,10 @@
+from datetime import datetime
+
 from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.orm import session
-from models.basemodel import Student
-from schemas.pydantic_models import Item
+
+from database.database import Session
+from models.basemodel import Student as StudentModel
+from schemas.pydantic_models import Item, Student as StudentSchema
 from auth.auth import get_current_user
 
 router = APIRouter()
@@ -10,7 +13,7 @@ router = APIRouter()
 def student_details(student_id:int,current_user = Depends(get_current_user)):
     db = Session()
 
-    student_details = db.query(Student).fetch(Student.sid == student_id).first()
+    student_details = db.query(StudentModel).filter(StudentModel.sid == student_id).first()
 
     if not student_details:
         raise HTTPException(
@@ -19,20 +22,20 @@ def student_details(student_id:int,current_user = Depends(get_current_user)):
         )
     
     student_data = {
-        "sid":Student.sid,
-        "name":Student.name,
-        "email":Student.email,
-        "cgpa":Student.cgpa,
-        "created_at":Student.created_at
+        "sid":student_details.sid,
+        "name":student_details.name,
+        "email":student_details.email,
+        "cgpa":student_details.cgpa,
+        "created_at":student_details.created_at
     }
 
-    return Student_data
+    return student_data
 
-@route.post("/add-student")
-def add_student(student:Student,current_user = Depends(get_current_user)):
+@router.post("/add-student")
+def add_student(student:StudentSchema,current_user = Depends(get_current_user)):
     db = Session()
 
-    db_student = Student(
+    db_student = StudentModel(
         sid = student.sid,
         name = student.name,
         dept = student.dept,
@@ -54,7 +57,7 @@ def add_student(student:Student,current_user = Depends(get_current_user)):
 def update_student(student_id:int,payload:Item,current_user = Depends(get_current_user)):
     db = Session()
 
-    student_details = db.query(Student).filter(student.sid == student_id).first()
+    student_details = db.query(StudentModel).filter(StudentModel.sid == student_id).first()
 
     if not student_details:
         raise HTTPException(

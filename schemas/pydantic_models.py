@@ -6,6 +6,13 @@ class Certification(BaseModel):
     sid:int
     title:str
 
+class Resume(BaseModel):
+    r_id:int
+    sid:int
+    public_id:str
+    file_name:str
+    file_url:str
+
 class Item(BaseModel):
     title : Optional[str] = None
     description : Optional[str] = None
@@ -29,13 +36,13 @@ class Skills(BaseModel):
     title:str
 
 class Student(BaseModel):
-    sid : optional[int] = None
-    name : optional[str] = None
-    dept : optional[str] = None
-    email : optional[str] = None
-    year : optional[int] = None
-    cgpa : optional[float] = None
-    domain : optional[str] = None
+    sid : Optional[int] = None
+    name : Optional[str] = None
+    dept : Optional[str] = None
+    email : Optional[str] = None
+    year : Optional[int] = None
+    cgpa : Optional[float] = None
+    domain : Optional[str] = None
 
 
 class Project(BaseModel):

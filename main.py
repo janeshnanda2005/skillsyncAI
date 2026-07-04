@@ -8,15 +8,16 @@ from routes.project import router as project_router
 from models.basemodel import Base
 from database.database import engine
 
-
-Base.metadata.create_all(bind=engine)
-
-
 app = FastAPI(
     title ="Skillsyncai",
     description="A platform to connect students with projects and skills",
     version="1.0.0"
 )
+
+
+@app.on_event("startup")
+def create_tables() -> None:
+    Base.metadata.create_all(bind=engine)
 
 @app.get("/")
 def root():

@@ -24,6 +24,15 @@ class User(Base):
     password = Column(String(100),nullable=False)
     created_at = Column(DateTime,nullable=False,server_default="now()")
 
+class Resume(Base):
+    __tablename__ = "resumes"
+
+    r_id = Column(Integer, primary_key=True)
+    sid = Column(Integer,ForeignKey("students.sid"),nullable=False)
+    public_id = Column(String(100),nullable=False)
+    file_name = Column(String(100),nullable=False)
+    file_url = Column(String(200),nullable=False)
+
 class Admin(Base):
     __tablename__ = "admin"
 
@@ -31,7 +40,7 @@ class Admin(Base):
     name = Column(String(50),nullable=False)
     email = Column(String(50),unique=True,nullable=False)
     password = Column(String(100),nullable=False)
-    created_at = Column(Datetime,nullable=False,server_default="now()")
+    created_at = Column(DateTime,nullable=False,server_default="now()")
 
 class Project(Base):
     __tablename__ = "projects"
