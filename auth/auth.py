@@ -1,10 +1,11 @@
 from datetime import datetime, timedelta
 from jose import JWTError, jwt
-from passlib.context import CryptContext
 from fastapi import HTTPException, Depends
 from dotenv import load_dotenv
 from fastapi.security import OAuth2PasswordBearer
 import os
+import bcrypt
+from passlib.hash import pbkdf2_sha256
 
 
 load_dotenv()
@@ -15,21 +16,22 @@ ACCESS_TOKEN_EXPIRE_MINUTES = os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES")
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 
-pwd_context = CryptContext(
-    schemes=["bcrypt"],
-    deprecated="auto"
-)
-
 
 def hash_password(password: str):
-    return pwd_context.hash(password)
+    return pbkdf2_sha256.hash(password)
 
 
 def verify_password(plain_password: str, hashed_password: str):
-    return pwd_context.verify(
-        plain_password,
-        hashed_password
-    )
+    if hashed_password.startswith(("$2a$", "$2b$", "$2y$", "$2x$")):
+        try:
+            return bcrypt.checkpw(
+                plain_password.encode("utf-8"),
+                hashed_password.encode("utf-8"),
+            )
+        except ValueError:
+            return False
+
+    return pbkdf2_sha256.verify(plain_password, hashed_password)
 
 
 def create_access_token(data: dict):

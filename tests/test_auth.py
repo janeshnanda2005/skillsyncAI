@@ -115,3 +115,24 @@ def test_current_user_authenticated(client):
     assert response.status_code == 200
     assert response.json()["message"] == "Current user details"
     assert response.json()["user"]["sub"] == "eve@example.com"
+
+
+def test_register_and_login_with_long_password(client):
+    long_password = "p" * 100
+    user_data = {
+        "uid": 17,
+        "name": "Frank",
+        "email": "frank@example.com",
+        "password": long_password,
+        "correct_password": long_password,
+    }
+
+    register_response = client.post("/auth/register", json=user_data)
+    assert register_response.status_code == 201
+
+    login_response = client.post(
+        "/auth/login",
+        json={"email": "frank@example.com", "password": long_password},
+    )
+    assert login_response.status_code == 200
+    assert "access_token" in login_response.json()

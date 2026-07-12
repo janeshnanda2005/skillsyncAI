@@ -21,7 +21,6 @@ app = FastAPI(
     redoc_url="/redoc",
 )
 
-# ── CORS (allow all origins in dev — tighten in production) ──────────────────
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -40,8 +39,6 @@ def create_tables() -> None:
 def root():
     return {"message": "Welcome to SkillSyncAI API 🚀", "docs": "/docs"}
 
-
-# ── Routers ───────────────────────────────────────────────────────────────────
 
 app.include_router(auth_router,           prefix="/auth",           tags=["Auth"])
 app.include_router(student_router,        prefix="/students",       tags=["Students"])

@@ -19,7 +19,6 @@ from schemas.pydantic_models import (
 router = APIRouter()
 
 
-# ── Helper ────────────────────────────────────────────────────────────────────
 
 def _get_student_by_user(current_user: dict, db: Session) -> StudentModel:
     email = current_user.get("sub")
