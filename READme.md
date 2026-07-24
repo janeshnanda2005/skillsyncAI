@@ -143,7 +143,7 @@ Port     : 5432
 Create a `.env` file:
 
 ```env
-DATABASE_URL=postgresql://postgres:password@localhost:5432/skillsyncai
+DATABASE_URL=your_postgres_server
 
 SECRET_KEY=your_secret_key
 
