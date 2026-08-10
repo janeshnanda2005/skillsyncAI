@@ -36,7 +36,6 @@ def upload_resume(
     db: Session = Depends(get_db),
     current_user: dict = Depends(get_current_user),
 ):
-    """Upload a resume (PDF/image) to Cloudinary and store the record."""
     student = _get_student_by_user(current_user, db)
 
     try:

@@ -1,0 +1,9 @@
+{
+  "dependencies": {
+    "axios": "^1.18.1",
+    "bcrypt": "^6.0.0",
+    "bootstrap": "^5.3.8",
+    "react-bootstrap": "^2.10.10",
+    "vite": "^8.1.5"
+  }
+}

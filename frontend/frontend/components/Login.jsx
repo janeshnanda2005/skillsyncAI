@@ -14,8 +14,6 @@ export const Login = async(email,password) => {
 
 
 
-
-
 import React, { useState } from 'react'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import { Form, Button, Container, Row, Col } from 'react-bootstrap'

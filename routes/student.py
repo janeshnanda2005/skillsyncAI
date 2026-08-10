@@ -11,17 +11,29 @@ from auth.auth import get_current_user
 router = APIRouter()
 
 
-@router.get("/get-student-details", response_model=StudentResponse)
+# @router.get("/get-student-details", response_model=StudentResponse)
+# def student_details(
+#     student_id: int,
+#     db: Session = Depends(get_db),
+#     current_user: dict = Depends(get_current_user),
+# ):
+#     """Get full details of a student by their ID."""
+#     student = db.query(StudentModel).filter(StudentModel.sid == student_id).first()
+#     if not student:
+#         raise HTTPException(status_code=404, detail="Student not found")
+#     return student
+
+@router.get("/get-student-details",response_model=StudentResponse)
 def student_details(
-    student_id: int,
-    db: Session = Depends(get_db),
-    current_user: dict = Depends(get_current_user),
-):
-    """Get full details of a student by their ID."""
+    student_id:int,
+    db:Session = Depends(get_db),
+    current_user: dict = Depends(get_db)):
+
     student = db.query(StudentModel).filter(StudentModel.sid == student_id).first()
     if not student:
-        raise HTTPException(status_code=404, detail="Student not found")
+        raise HTTPException(status_code=404,detail="Student_not_found")
     return student
+
 
 
 @router.get("/me", response_model=StudentResponse)
