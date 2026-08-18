@@ -1,8 +1,7 @@
 from datetime import datetime, timedelta
 from jose import JWTError, jwt
-from fastapi import HTTPException, Depends
+from fastapi import HTTPException, Header, Query
 from dotenv import load_dotenv
-from fastapi.security import OAuth2PasswordBearer
 import os
 import bcrypt
 from passlib.hash import pbkdf2_sha256
@@ -13,8 +12,6 @@ load_dotenv()
 SECRET_KEY = os.getenv("SECRET_KEY")
 ALGORITHM = os.getenv("ALGORITHM")
 ACCESS_TOKEN_EXPIRE_MINUTES = os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES")
-
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 
 
 def hash_password(password: str):
@@ -74,6 +71,17 @@ def verify_token(token: str):
 
 
 def get_current_user(
-    token: str = Depends(oauth2_scheme)
+    authorization: str | None = Header(default=None, alias="Authorization"),
+    token: str | None = Query(default=None, alias="token"),
 ):
-    return verify_token(token)
+    raw_token = token
+
+    if authorization:
+        if not authorization.lower().startswith("bearer "):
+            raise HTTPException(status_code=401, detail="Invalid authentication scheme")
+        raw_token = authorization.split(" ", 1)[1]
+
+    if not raw_token:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+
+    return verify_token(raw_token)

@@ -1,19 +1,23 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import { AuthProvider } from '../components/Authcontext'
-import viteLogo from './assets/vite.svg'
 import Login from '../components/Login'
-import heroImg from './assets/hero.png'
+import Signup from '../components/Signup'
+import Home from '../pages/Home'
 import './App.css'
 
 function App() {
-  return(<>
+  return (
     <AuthProvider>
-      <div className="App">
-        <Login/>
-      </div>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<Navigate to="/login" replace />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/home" element={<Home />} />
+        </Routes>
+      </BrowserRouter>
     </AuthProvider>
-  </>)
+  )
 }
 
 export default App
