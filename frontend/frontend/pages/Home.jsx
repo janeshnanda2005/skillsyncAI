@@ -47,6 +47,15 @@ function Home() {
         <div className="col-md-4">
           <div className="card h-100 shadow-sm border-0">
             <div className="card-body">
+              <h5 className="card-title">Resume</h5>
+              <p className="card-text text-muted">Upload your current Resume for prediction</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="col-md-4">
+          <div className="card h-100 shadow-sm border-0">
+            <div className="card-body">
               <h5 className="card-title">Certifications</h5>
               <p className="card-text text-muted">Monitor certifications and verification milestones.</p>
             </div>
@@ -55,6 +64,7 @@ function Home() {
       </div>
     </div>
   );
+
 }
 
 export default Home;
