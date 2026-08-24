@@ -52,13 +52,12 @@ function Login() {
     setErrors({});
 
     try {
-      const data = await loginUser(email,password);
-      login(data)
+      const data = await loginUser(email, password);
+      login(data);
       setSubmitError('');
-      Setsuccess('Login Successful!');
+      Setsuccess('Login success');
       navigate('/home');
-    }
-    catch{
+    } catch (error) {
       setSubmitError(
         error.response?.data?.detail || 'Login Failed please check your credentials'
       );

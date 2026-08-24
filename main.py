@@ -46,3 +46,7 @@ app.include_router(skills_router,         prefix="/skills",         tags=["Skill
 app.include_router(certifications_router, prefix="/certifications", tags=["Certifications"])
 app.include_router(project_router,        prefix="/projects",       tags=["Projects & Resumes"])
 app.include_router(admin_router,          prefix="/admin",          tags=["Admin"])
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True)

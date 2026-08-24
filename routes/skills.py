@@ -1,9 +1,11 @@
+from datetime import datetime
+
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from database.database import get_db
 from auth.auth import get_current_user
-from models.basemodel import Skills as SkillModel, Student as StudentModel
+from models.basemodel import Skills as SkillModel, Student as StudentModel, User as UserModel
 from schemas.pydantic_models import SkillCreate, SkillResponse
 
 router = APIRouter()
@@ -27,8 +29,27 @@ def add_skill(
     db: Session = Depends(get_db),
     current_user: dict = Depends(get_current_user),
 ):
+    email = current_user.get("sub")
+    student = db.query(StudentModel).filter(StudentModel.email == email).first()
 
-    student = _get_student_by_user(current_user, db)
+    if not student:
+        user = db.query(UserModel).filter(UserModel.email == email).first()
+        if not user:
+            raise HTTPException(status_code=404, detail="User not found")
+
+        # Bootstrap a minimal student profile so first-time users can add skills.
+        student = StudentModel(
+            name=user.name,
+            dept="NA",
+            email=user.email,
+            year=1,
+            cgpa=0.0,
+            domain="General",
+            created_at=datetime.utcnow(),
+        )
+        db.add(student)
+        db.commit()
+        db.refresh(student)
 
     existing = (
         db.query(SkillModel)

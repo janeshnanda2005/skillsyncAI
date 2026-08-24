@@ -66,8 +66,6 @@ def add_student(
         dept=student.dept,
         email=student.email,
         year=student.year,
-        cgpa=student.cgpa,
-        domain=student.domain,
         created_at=datetime.utcnow(),
     )
 

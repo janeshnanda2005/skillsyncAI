@@ -6,6 +6,13 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../components/Authcontext';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+const API_BASE = (() => {
+  try {
+    return new URL(API_URL).origin;
+  } catch {
+    return API_URL.replace(/\/+$/, '');
+  }
+})();
 
 const skillOptions = [
   'Python',
@@ -39,7 +46,7 @@ function AddSkills() {
     event.preventDefault();
 
     const title = (customSkill || selectedSkill).trim();
-
+    console.log(title);
     if (!title) {
       setError('Please select or enter a skill.');
       setSuccess('');
@@ -55,7 +62,7 @@ function AddSkills() {
 
     try {
       await axios.post(
-        `${API_URL}/skills/add-skill`,
+        `${API_BASE}/skills/add-skill`,
         { title },
         {
           headers: {
