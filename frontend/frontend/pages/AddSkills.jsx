@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import axios from 'axios';
+import Dropdown from '../components/Dropdown';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Form, Button, Alert } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
@@ -131,6 +132,12 @@ function AddSkills() {
             </Button>
           </div>
         </Form>
+
+        <Dropdown
+          endpoint="http://localhost:5173/add-skill"
+          labelText="Add Skill"
+          placeholder="Add the details of the skill"
+          onSelect={(id) => settile(id)}/>
       </div>
     </div>
   );

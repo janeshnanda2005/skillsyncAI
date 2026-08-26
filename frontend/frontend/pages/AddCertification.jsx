@@ -1,11 +1,12 @@
 import { useState } from "react";
 import axios from 'axios'
+import Dropdown from "../components/Dropdown";
 import 'bootstrap/dist/css/bootstrap.min.css'
 import {Form,Button,Alert} from 'react-bootstrap'
 import { useNavigate } from "react-router-dom";
 import {useAuth} from '../components/Authcontext'
 
-const API_URL = import.meta.env.VITE_API_URL || 'https://localhost:8000';
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 const API_BASE = (() => {
     try{
         return new URL(API_URL).origin;
@@ -26,9 +27,9 @@ function AddCert(){
     const handleSubmit = async (event) => {
         event.preventDefault();
 
-        const title = (title||des).trim();
+        const get_title = (title||des).trim();
 
-        if(!title){
+        if(!get_title){
             Seterror('Please enter the certificate details');
             Setsuccess('');
             return;
@@ -42,7 +43,7 @@ function AddCert(){
         }
         try{
             await axios.post(
-                `${API_BASE}/project/add-cert`,
+                `${API_BASE}/certifications/add-cert`,
                 {title},
                 {
                     headers:{
@@ -103,6 +104,12 @@ function AddCert(){
                         </Button>
                 </div>
                 </Form>
+
+                <Dropdown
+                    endpoint="http://localhost:5173/add-cert"
+                    labelText="Assign Employee"
+                    placeholder="choose a staff member"
+                    onSelect={(id) => settile(id)}/>
 
             </div>
         </div>

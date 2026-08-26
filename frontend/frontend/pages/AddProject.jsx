@@ -1,5 +1,6 @@
 import { useState } from "react";
 import axios from 'axios'
+import dropdown from "../components/Dropdown";
 import 'bootstrap/dist/css/bootstrap.min.css'
 import {Form,Button,Alert} from 'react-bootstrap'
 import { useNavigate } from "react-router-dom";
@@ -101,12 +102,15 @@ function AddProject(){
                         <Button variant="outline-secondary" onClick={() => navigate('/home')}>
                         Back Home
                         </Button>
-                </div>
+                    </div>
                 </Form>
 
 
-                
-
+                <Dropdown
+                    endpoint="http://localhost:5173/add-project"
+                    labelText="Add Project"
+                    placeholder="choose a project"
+                    onSelect={(id) => settile(id)}/>
             </div>
         </div>
     )

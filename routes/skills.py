@@ -83,12 +83,12 @@ def get_skills_by_student(
     current_user: dict = Depends(get_current_user),
 ):
     
-    student = db.query(SkillModel).filter(SkillModel.skill_id == student_id).first()
+    student = db.query(StudentModel).filter(StudentModel.sid == student_id).first()
 
     if not student:
-        raise HTTPException(status_code=401,detail="The Student id doesn't match")
+        raise HTTPException(status_code=404, detail="Student not found")
     
-    return db.query(SkillModel).filter(SkillModel.skill_id == student_id).all()
+    return db.query(SkillModel).filter(SkillModel.sid == student_id).all()
 
 @router.delete("/delete-skill/{skill_id}", status_code=200)
 def delete_skill(

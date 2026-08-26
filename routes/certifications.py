@@ -20,7 +20,7 @@ def _get_student_by_user(current_user: dict, db: Session) -> StudentModel:
 
 
 
-@router.post("/add-certification", response_model=CertificationResponse, status_code=201)
+@router.post("/add-cert", response_model=CertificationResponse, status_code=201)
 def add_certification(
     payload: CertificationCreate,
     db: Session = Depends(get_db),
