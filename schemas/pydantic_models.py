@@ -119,10 +119,22 @@ class ResumeResponse(BaseModel):
     sid: int
     public_id: str
     file_name: str
-    file_url: str
+    file_data: bytes 
 
     class Config:
         from_attributes = True
+
+class ResumeCreate(BaseModel):
+    r_id:int
+    sid:int
+    public_id:str
+    file_name:str
+    file_data: bytes
+
+class ResumeUpdate(BaseModel):
+   file_name:Optional[str] = None
+   file_data:Optional[bytes] =None
+    
 
 
 # ─── Admin ───────────────────────────────────────────────────────────────────

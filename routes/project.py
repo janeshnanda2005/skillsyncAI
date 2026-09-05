@@ -1,5 +1,4 @@
-import cloudinary.uploader
-from fastapi import APIRouter, Depends, File, HTTPException, UploadFile
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from database.database import get_db
@@ -26,79 +25,6 @@ def _get_student_by_user(current_user: dict, db: Session) -> StudentModel:
     if not student:
         raise HTTPException(status_code=404, detail="Student profile not found")
     return student
-
-
-# ── Resume endpoints ──────────────────────────────────────────────────────────
-
-@router.post("/upload-resume", status_code=201)
-def upload_resume(
-    file: UploadFile = File(...),
-    db: Session = Depends(get_db),
-    current_user: dict = Depends(get_current_user),
-):
-    student = _get_student_by_user(current_user, db)
-
-    try:
-        upload_data = cloudinary.uploader.upload(
-            file.file,
-            folder="resumes",
-            resource_type="auto",
-        )
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Cloudinary upload failed: {str(e)}")
-
-    resume = ResumeModel(
-        sid=student.sid,
-        public_id=upload_data["public_id"],
-        file_name=upload_data.get("original_filename", file.filename),
-        file_url=upload_data["secure_url"],
-    )
-    db.add(resume)
-    db.commit()
-    db.refresh(resume)
-
-    return {
-        "message": "Resume uploaded successfully",
-        "file_name": resume.file_name,
-        "file_url": resume.file_url,
-    }
-
-
-@router.get("/my-resumes", response_model=list[ResumeResponse])
-def get_my_resumes(
-    db: Session = Depends(get_db),
-    current_user: dict = Depends(get_current_user),
-):
-    
-    student = _get_student_by_user(current_user, db)
-    return db.query(ResumeModel).filter(ResumeModel.sid == student.sid).all()
-
-
-@router.delete("/delete-resume/{r_id}", status_code=200)
-def delete_resume(
-    r_id: int,
-    db: Session = Depends(get_db),
-    current_user: dict = Depends(get_current_user),
-):
-
-    student = _get_student_by_user(current_user, db)
-
-    resume = db.query(ResumeModel).filter(
-        ResumeModel.r_id == r_id,
-        ResumeModel.sid == student.sid,
-    ).first()
-    if not resume:
-        raise HTTPException(status_code=404, detail="Resume not found or not yours to delete")
-
-    try:
-        cloudinary.uploader.destroy(resume.public_id)
-    except Exception:
-        pass
-
-    db.delete(resume)
-    db.commit()
-    return {"message": "Resume deleted successfully"}
-
 
 # ── Project endpoints ─────────────────────────────────────────────────────────
 

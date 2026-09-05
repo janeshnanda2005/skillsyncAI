@@ -85,6 +85,7 @@ function Home() {
             <div className="card-body">
               <h5 className="card-title">Resume</h5>
               <p className="card-text text-muted">Upload your current Resume for prediction</p>
+              <Button onClick={() => navigate('/upload-resume')}>Add Resume</Button>
             </div>
           </div>
         </div>

@@ -11,8 +11,6 @@ from schemas.pydantic_models import SkillCreate, SkillResponse
 router = APIRouter()
 
 
-# ── Helper: resolve student from logged-in user ──────────────────────────────
-
 def _get_student_by_user(current_user: dict, db: Session) -> StudentModel:
     email = current_user.get("sub")
     student = db.query(StudentModel).filter(StudentModel.email == email).first()
@@ -20,8 +18,6 @@ def _get_student_by_user(current_user: dict, db: Session) -> StudentModel:
         raise HTTPException(status_code=404, detail="Student profile not found")
     return student
 
-
-# ── Endpoints ────────────────────────────────────────────────────────────────
 
 @router.post("/add-skill", response_model=SkillResponse, status_code=201)
 def add_skill(
@@ -36,8 +32,7 @@ def add_skill(
         user = db.query(UserModel).filter(UserModel.email == email).first()
         if not user:
             raise HTTPException(status_code=404, detail="User not found")
-
-        # Bootstrap a minimal student profile so first-time users can add skills.
+            
         student = StudentModel(
             name=user.name,
             dept="NA",

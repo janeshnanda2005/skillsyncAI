@@ -28,10 +28,18 @@ function AddProject(){
         event.preventDefault();
 
         const get_title = title.trim();
+        const get_des = des.trim();
+
 
         if(!get_title){
             Seterror('Please enter the project details');
             Setsuccess('');
+            return;
+        }
+
+        if(!get_des){
+            Seterror('Please eneter the descroption');
+            Setsuccess('')
             return;
         }
 

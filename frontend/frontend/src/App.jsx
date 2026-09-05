@@ -4,6 +4,7 @@ import Login from '../pages/Login'
 import AddSkills from '../pages/AddSkills'
 import AddCert from '../pages/AddCertification'
 import AddProject from '../pages/AddProject'
+import AddResume from '../pages/AddResume'
 import Signup from '../pages/Signup'
 import Home from '../pages/Home'
 import './App.css'
@@ -18,6 +19,7 @@ function App() {
           <Route path="/signup" element={<Signup />} />
           <Route path="/home" element={<Home />} />
           <Route path="/add-project" element={<AddProject/>}/>
+          <Route path="/upload-resume" element={<AddResume />} />
           <Route path="/add-cert" element={<AddCert/>}/>
           <Route path="/add-skill" element={<AddSkills />} />
         </Routes>

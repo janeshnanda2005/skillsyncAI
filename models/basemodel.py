@@ -1,5 +1,5 @@
 from sqlalchemy.orm import declarative_base
-from sqlalchemy import Column, Integer, String, Float, DateTime, ForeignKey, Boolean
+from sqlalchemy import Column, Integer, String, Float, DateTime, ForeignKey, Boolean, LargeBinary
 
 Base = declarative_base()
 
@@ -35,7 +35,7 @@ class Resume(Base):
     sid       = Column(Integer, ForeignKey("students.sid", ondelete="CASCADE"), nullable=False)
     public_id = Column(String(100), nullable=False)
     file_name = Column(String(100), nullable=False)
-    file_url  = Column(String(300), nullable=False)
+    file_data  = Column(LargeBinary, nullable=False)
 
 
 class Admin(Base):

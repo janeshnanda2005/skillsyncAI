@@ -44,15 +44,11 @@ def add_certification(
     return cert
 
 
-@router.get("/my-certifications", response_model=list[CertificationResponse])
-def get_my_certifications(
-    db: Session = Depends(get_db),
-    current_user: dict = Depends(get_current_user),
-):
-    """List all certifications of the logged-in student."""
-    student = _get_student_by_user(current_user, db)
-    return db.query(CertModel).filter(CertModel.sid == student.sid).all()
 
+@router.get("/my-certifications",response_model=list[CertificationResponse])
+def get_my_certificate(db:Session = Depends(get_db),current_user:dict = Depends(get_current_user)):
+    student = _get_student_by_user(current_user,db)
+    return db.query(CertModel).filter(CertModel.sid == student.sid).all()                    
 
 @router.get("/student/{student_id}", response_model=list[CertificationResponse])
 def get_certifications_by_student(
