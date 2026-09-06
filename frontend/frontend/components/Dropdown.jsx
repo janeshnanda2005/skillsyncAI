@@ -53,7 +53,7 @@ export default function Dropdown({endpoint,labelText,placeholder,onSelect}){
                         <option value="" disabled>-- {placeholder} --</option>
                         {items.map((item) => (
                             <option key = {item.id} value={item.id}>
-                                {label.label_text}
+                                {label.label_text} : {item}
                             </option>
                         ))}
                         </select>

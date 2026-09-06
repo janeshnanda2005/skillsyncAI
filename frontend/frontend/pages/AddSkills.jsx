@@ -16,37 +16,203 @@ const API_BASE = (() => {
 })();
 
 const skillOptions = [
+  // Programming Languages
   'Python',
+  'Java',
   'JavaScript',
   'TypeScript',
-  'Java',
+  'C',
   'C++',
   'C#',
+  'Go',
+  'Rust',
+  'PHP',
+  'Ruby',
+  'Kotlin',
+  'Swift',
+  'R',
+  'MATLAB',
+  'Scala',
+  'Dart',
+  'Perl',
+  'Shell Scripting',
+  'Bash',
+
+  // Frontend
+  'HTML',
+  'CSS',
   'React',
+  'Next.js',
+  'Angular',
+  'Vue.js',
+  'Svelte',
+  'Redux',
+  'Tailwind CSS',
+  'Bootstrap',
+  'Material UI',
+  'jQuery',
+
+  // Backend
   'Node.js',
+  'Express.js',
   'FastAPI',
   'Django',
+  'Flask',
+  'Spring Boot',
+  'ASP.NET',
+  'Laravel',
+  'Ruby on Rails',
+  'REST API',
+  'GraphQL',
+  'WebSockets',
+
+  // Databases
   'SQL',
-  'MongoDB',
+  'MySQL',
   'PostgreSQL',
-  'Git',
-  'Docker',
+  'SQLite',
+  'Oracle Database',
+  'MongoDB',
+  'Redis',
+  'Cassandra',
+  'Firebase',
+  'DynamoDB',
+  'Elasticsearch',
+
+  // AI / Machine Learning
+  'Machine Learning',
+  'Deep Learning',
+  'Artificial Intelligence',
+  'Natural Language Processing',
+  'Computer Vision',
+  'Generative AI',
+  'Large Language Models',
+  'PyTorch',
+  'TensorFlow',
+  'Keras',
+  'Scikit-learn',
+  'Pandas',
+  'NumPy',
+  'Matplotlib',
+  'OpenCV',
+  'Hugging Face',
+  'LangChain',
+  'LangGraph',
+  'YOLO',
+  'CNN',
+  'RNN',
+  'Transformers',
+  'Reinforcement Learning',
+
+  // Data Science / Big Data
+  'Data Analysis',
+  'Data Science',
+  'Data Visualization',
+  'Power BI',
+  'Tableau',
+  'Apache Spark',
+  'Hadoop',
+  'Apache Kafka',
+  'ETL',
+  'Data Engineering',
+
+  // Cloud
   'AWS',
-  'Azure',
+  'Microsoft Azure',
+  'Google Cloud Platform',
+  'AWS EC2',
+  'AWS S3',
+  'AWS Lambda',
+  'AWS RDS',
+  'Azure Functions',
+  'Google Cloud Functions',
+
+  // DevOps / Tools
+  'Git',
+  'GitHub',
+  'GitLab',
+  'Docker',
+  'Kubernetes',
+  'Jenkins',
+  'GitHub Actions',
+  'CI/CD',
+  'Terraform',
+  'Ansible',
+  'Linux',
+  'Nginx',
+
+  // Mobile Development
+  'React Native',
+  'Flutter',
+  'Android Development',
+  'iOS Development',
+
+  // Testing
+  'Unit Testing',
+  'Integration Testing',
+  'PyTest',
+  'Jest',
+  'Selenium',
+  'Postman',
+
+  // Core Computer Science
+  'Data Structures',
+  'Algorithms',
+  'Object-Oriented Programming',
+  'Operating Systems',
+  'Computer Networks',
+  'Database Management Systems',
+  'System Design',
+  'Multithreading',
+  'Distributed Systems',
+  'Microservices',
+  'RESTful Architecture',
+
+  // Cybersecurity
+  'Cybersecurity',
+  'Network Security',
+  'Authentication',
+  'Authorization',
+  'JWT',
+  'OAuth',
+
+  // Other Development Skills
+  'Web Development',
+  'Backend Development',
+  'Frontend Development',
+  'Full Stack Development',
+  'API Development',
+  'Software Development',
+  'Agile',
+  'Scrum',
+  'JIRA',
 ];
 
 function AddSkills() {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const [search,Setsearch] = useState('');
+  const [isopen,SetIsOpen] = useState(false)
   const [selectedSkill, setSelectedSkill] = useState('');
-  const [customSkill, setCustomSkill] = useState('');
   const [error, setError] = useState('');
+  const [showdropdown,Setshowdropdown] = useState(false)
   const [success, setSuccess] = useState('');
+
+
+  const filterskills = skillOptions.filter((skill) => 
+    skill.toLowerCase().includes(search.toLowerCase())
+  );
+
+  const handleselection = (skill) => {
+    setSelectedSkill(skill);
+    Setsearch(skill);
+    SetIsOpen(false)
+  }
 
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    const title = (customSkill || selectedSkill).trim();
+    const title = (selectedSkill).trim();
     console.log(title);
     if (!title) {
       setError('Please select or enter a skill.');
@@ -75,7 +241,6 @@ function AddSkills() {
       setSuccess('Skill added successfully.');
       setError('');
       setSelectedSkill('');
-      setCustomSkill('');
     } catch (err) {
       const detail = err.response?.data?.detail || 'Unable to add skill right now.';
       setError(detail);
@@ -94,33 +259,42 @@ function AddSkills() {
         <Form onSubmit={handleSubmit}>
           <Form.Group className="mb-3" controlId="skillSelect">
             <Form.Label>Select a skill</Form.Label>
-            <Form.Select
-              value={selectedSkill}
-              onChange={(event) => {
-                setSelectedSkill(event.target.value);
-                if (event.target.value) setCustomSkill('');
-              }}
-            >
-              <option value="">Choose a skill</option>
-              {skillOptions.map((skill) => (
-                <option key={skill} value={skill}>
-                  {skill}
-                </option>
-              ))}
-            </Form.Select>
-          </Form.Group>
+              <div className='position-relative'>
+                <Form.Control
+                  type = "text"
+                  placeholder="type or search the skill"
+                  value={selectedSkill}
+                  onFocus={(event) => Setshowdropdown(true)}
+                  onChange={(event)=>{
+                    setSelectedSkill(event.target.value);
+                    Setshowdropdown(true);
+                  }}  
+                  />
+                  {showdropdown && (
+                    <div className="skill-dropdown">
+                      {skillOptions
+                          .filter((skill) => 
+                              skill.toLowerCase().includes(selectedSkill.toLowerCase())
+                              
+                            )
+                            .map((skill) => (
+                              <div
+                                key = {skill}
+                                className='skill-option'
+                                onClick={()=>{
+                                  setSelectedSkill(skill);
+                                  Setshowdropdown(false);
 
-          <Form.Group className="mb-3" controlId="customSkill">
-            <Form.Label>Or type your own skill</Form.Label>
-            <Form.Control
-              type="text"
-              placeholder="e.g. Machine Learning"
-              value={customSkill}
-              onChange={(event) => {
-                setCustomSkill(event.target.value);
-                if (event.target.value.trim()) setSelectedSkill('');
-              }}
-            />
+                                }}
+                                >
+                                  {skill}
+                                </div>
+                            ))}
+                      
+                    </div>
+
+                  )}
+              </div>
           </Form.Group>
 
           <div className="d-flex gap-2">
