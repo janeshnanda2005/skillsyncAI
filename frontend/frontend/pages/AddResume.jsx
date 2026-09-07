@@ -6,14 +6,6 @@ import { useAuth } from '../components/Authcontext';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
-const API_BASE = (() => {
-    try{
-        return new URL(API_URL).origin;
-    }
-    catch{
-        return API_URL.replace(/\/+$/,'');
-    }
-})();
 
 function AddResume(){
     const{user} = useAuth();
@@ -22,6 +14,8 @@ function AddResume(){
     const [error, setError] = useState('');
     const fileInput = useRef(null);
     const [success, setSuccess] = useState('');
+
+
 
     const handlefilechange = (event) => {
         const selectedFile = event.target.files[0];
@@ -58,7 +52,7 @@ function AddResume(){
 
         try {
             await axios.post(
-                `${API_BASE}/resume/upload-resume`,
+                `${API_URL}/resume/upload-resume`,
                 formData,
                 {
                     headers:{

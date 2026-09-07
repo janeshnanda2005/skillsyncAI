@@ -2,7 +2,7 @@ import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import { AuthProvider } from '../components/Authcontext'
 import { AppShell } from '../components/Navbar'
 import Login from '../pages/Login'
-import AddSkills from '../pages/AddSkills'
+import Skills from '../pages/Skills'
 import AddCert from '../pages/AddCertification'
 import AddProject from '../pages/AddProject'
 import AddResume from '../pages/AddResume'
@@ -23,7 +23,7 @@ function App() {
             <Route path="/add-project" element={<AddProject/>}/>
             <Route path="/upload-resume" element={<AddResume />} />
             <Route path="/add-cert" element={<AddCert/>}/>
-            <Route path="/add-skill" element={<AddSkills />} />
+            <Route path="/add-skill" element={<Skills />} />
           </Route>
         </Routes>
       </BrowserRouter>

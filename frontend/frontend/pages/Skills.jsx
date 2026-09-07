@@ -1,19 +1,12 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import axios from 'axios';
-import Dropdown from '../components/Dropdown';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Form, Button, Alert } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../components/Authcontext';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
-const API_BASE = (() => {
-  try {
-    return new URL(API_URL).origin;
-  } catch {
-    return API_URL.replace(/\/+$/, '');
-  }
-})();
+
 
 const skillOptions = [
   // Programming Languages
@@ -188,26 +181,42 @@ const skillOptions = [
   'JIRA',
 ];
 
-function AddSkills() {
+function Skills() {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const [search,Setsearch] = useState('');
-  const [isopen,SetIsOpen] = useState(false)
   const [selectedSkill, setSelectedSkill] = useState('');
   const [error, setError] = useState('');
   const [showdropdown,Setshowdropdown] = useState(false)
   const [success, setSuccess] = useState('');
+  const [skills, setSkills] = useState([]);
 
+  useEffect(() => {
+    if (!user?.access_token) return;
 
-  const filterskills = skillOptions.filter((skill) => 
-    skill.toLowerCase().includes(search.toLowerCase())
-  );
+    axios.get(`${API_URL}/skills/my-skills`, {
+      headers: { Authorization: `Bearer ${user.access_token}` },
+    })
+      .then((response) => setSkills(response.data))
+      .catch((err) => setError(err.response?.data?.detail || 'Unable to load your skills.'));
+  }, [user]);
 
-  const handleselection = (skill) => {
-    setSelectedSkill(skill);
-    Setsearch(skill);
-    SetIsOpen(false)
-  }
+    const handleDelete = async(skillId) => {
+      const token = user?.access_token;
+      if(!token) return;
+
+      try{
+        await axios.delete(`${API_URL}/skills/delete-skill/${skillId}`,{
+          headers: {Authorization:`Bearer ${token}`},
+        });
+          setSkills((currentSkills) => currentSkills.filter((skill) => skill.skill_id !== skillId));
+          setSuccess("Skill deleted successfully");
+          setError('')
+      }
+      catch(err){
+        setError(err.response?.data?.detail||'Unable to delete the skill right now');
+        setSuccess('');
+      }
+    };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -229,7 +238,7 @@ function AddSkills() {
 
     try {
       await axios.post(
-        `${API_BASE}/skills/add-skill`,
+        `${API_URL}/skills/add-skill`,
         { title },
         {
           headers: {
@@ -241,6 +250,10 @@ function AddSkills() {
       setSuccess('Skill added successfully.');
       setError('');
       setSelectedSkill('');
+      const response = await axios.get(`${API_URL}/skills/my-skills`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setSkills(response.data);
     } catch (err) {
       const detail = err.response?.data?.detail || 'Unable to add skill right now.';
       setError(detail);
@@ -264,7 +277,7 @@ function AddSkills() {
                   type = "text"
                   placeholder="type or search the skill"
                   value={selectedSkill}
-                  onFocus={(event) => Setshowdropdown(true)}
+                  onFocus={() => Setshowdropdown(true)}
                   onChange={(event)=>{
                     setSelectedSkill(event.target.value);
                     Setshowdropdown(true);
@@ -307,14 +320,35 @@ function AddSkills() {
           </div>
         </Form>
 
-        <Dropdown
-          endpoint="http://localhost:5173/add-skill"
-          labelText="Add Skill"
-          placeholder="Add the details of the skill"
-          onSelect={(id) => settile(id)}/>
+        <div className="mt-4">
+          <h5>Your Skills</h5>
+          {skills.length === 0 ? (
+            <p className="text-muted">No skills added yet.</p>
+          ) : (
+            <ul className="list-group">
+              {skills.map((skill) => (
+                <li
+                  key={skill.skill_id}
+                  className="list-group-item d-flex justify-content-between align-items-center"
+                >
+                  <span>{skill.title}</span>
+                  <Button
+                    variant="outline-danger"
+                    size="sm"
+                    type="button"
+                    onClick={() => handleDelete(skill.skill_id)}
+                  >
+                    Delete
+                  </Button>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+          
       </div>
     </div>
   );
 }
 
-export default AddSkills;
+export default Skills;

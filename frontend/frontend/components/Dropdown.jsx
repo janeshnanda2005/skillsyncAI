@@ -1,10 +1,16 @@
 import React,{useState,useEffect} from 'react';
+import { Prev } from 'react-bootstrap/esm/PageItem';
 
 export default function Dropdown({endpoint,labelText,placeholder,onSelect}){
     const [items,setitems] = useState([]);
     const [selectvalue,setselectvalue] = useState('')
+    const [size,setsize] = useState(100);
     const [loading,setLoading] = useState(true);
     const [error,Seterror] = useState(null);
+
+    const handleclick = () => {
+        setsize(P => p+40);
+    }
 
     useEffect(() => {
         setLoading(true);
@@ -36,6 +42,7 @@ export default function Dropdown({endpoint,labelText,placeholder,onSelect}){
                 {!loading && !error &&(
                     <select
                         value={selectedValue}
+                        onClick={handleclick}
                         onChange={(e) => {
                             setselectvalue(e.target.value);
                             if (onSelect) onSelect(e.target.value);
@@ -53,7 +60,7 @@ export default function Dropdown({endpoint,labelText,placeholder,onSelect}){
                         <option value="" disabled>-- {placeholder} --</option>
                         {items.map((item) => (
                             <option key = {item.id} value={item.id}>
-                                {label.label_text} : {item}
+                                {label.label_text}
                             </option>
                         ))}
                         </select>

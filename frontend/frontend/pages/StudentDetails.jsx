@@ -22,6 +22,7 @@ function StudentData(){
     const[name,setname] = useState('');
     const[dept,SetDept] = useState('');
     const[email,SetEmail] = useState('');
+    const[cgpa,Setcgpa] =  useState('')
     const[year,Setyear] = useState('');
     const[error,Seterror] = useState('');
     const[success,Setsuccess] = useState('');
@@ -31,11 +32,17 @@ function StudentData(){
 
         const get_name = name.trim();
         const get_dept = dept.trim();
+        const get_cgpa = cgpa.trim();
         const get_email = email.trim();
         if (!get_name){
             Seterror('Please enter a valid name');
             Setsuccess('');
             return;
+        }
+
+        if(!get_cgpa){
+            Seterror('Please enter an original cgpa')
+            Setsuccess('')
         }
 
         if(!get_dept){
