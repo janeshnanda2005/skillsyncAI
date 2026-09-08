@@ -65,7 +65,7 @@ function Home() {
             <div className="card-body">
               <h5 className="card-title">Skills</h5>
               <p className="card-text text-muted">Track your current technical skills and learning progress.</p>
-              <Button onClick={() => navigate('/add-skill')}>Add Skills</Button>
+              <Button onClick={() => navigate('/add-skill')}>Edit Skills</Button>
             </div>
           </div>
         </div>
@@ -75,7 +75,7 @@ function Home() {
             <div className="card-body">
               <h5 className="card-title">Projects</h5>
               <p className="card-text text-muted">Manage projects, portfolios, and recent work experience.</p>
-              <Button onClick={() => navigate('/add-project')}>Add Project</Button>
+              <Button onClick={() => navigate('/add-project')}>Edit Project</Button>
             </div>
           </div>
         </div>
@@ -85,7 +85,7 @@ function Home() {
             <div className="card-body">
               <h5 className="card-title">Resume</h5>
               <p className="card-text text-muted">Upload your current Resume for prediction</p>
-              <Button onClick={() => navigate('/upload-resume')}>Add Resume</Button>
+              <Button onClick={() => navigate('/upload-resume')}>Edit Resume</Button>
             </div>
           </div>
         </div>
@@ -95,7 +95,7 @@ function Home() {
             <div className="card-body">
               <h5 className="card-title">Certifications</h5>
               <p className="card-text text-muted">Monitor certifications and verification milestones.</p>
-              <Button onClick={() => navigate('/add-cert')}>Add Certificate</Button>
+              <Button onClick={() => navigate('/add-cert')}>Edit Certificate</Button>
             </div>
           </div>
         </div>

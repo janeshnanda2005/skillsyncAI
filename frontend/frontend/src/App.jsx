@@ -3,9 +3,9 @@ import { AuthProvider } from '../components/Authcontext'
 import { AppShell } from '../components/Navbar'
 import Login from '../pages/Login'
 import Skills from '../pages/Skills'
-import AddCert from '../pages/AddCertification'
-import AddProject from '../pages/AddProject'
-import AddResume from '../pages/AddResume'
+import Cert from '../pages/Certification'
+import Project from '../pages/Project'
+import Resume from '../pages/Resume'  
 import Signup from '../pages/Signup'
 import Home from '../pages/Home'
 import './App.css'
@@ -20,9 +20,9 @@ function App() {
           <Route path="/signup" element={<Signup />} />
           <Route element={<AppShell />}>
             <Route path="/home" element={<Home />} />
-            <Route path="/add-project" element={<AddProject/>}/>
-            <Route path="/upload-resume" element={<AddResume />} />
-            <Route path="/add-cert" element={<AddCert/>}/>
+            <Route path="/add-project" element={<Project/>}/>
+            <Route path="/upload-resume" element={<Resume />} />
+            <Route path="/add-cert" element={<Cert/>}/>
             <Route path="/add-skill" element={<Skills />} />
           </Route>
         </Routes>

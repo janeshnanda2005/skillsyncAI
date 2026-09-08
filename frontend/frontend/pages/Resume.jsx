@@ -7,7 +7,7 @@ import { useAuth } from '../components/Authcontext';
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
 
-function AddResume(){
+function Resume(){
     const{user} = useAuth();
     const [file, setFile] = useState(null);
     const [status, setStatus] = useState('');
@@ -107,4 +107,4 @@ function AddResume(){
         );
 }
 
-export default AddResume;
+export default Resume;
