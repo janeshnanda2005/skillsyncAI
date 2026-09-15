@@ -48,13 +48,13 @@ def update_resume(
     db:Session = Depends(get_db),
     current_user:dict = Depends(get_current_user)):
 
-    res = db.query(Resume).filter(Resume.sid == student_id).filter()
+    res = db.query(Resume).filter(Resume.sid == student_id).first()
     if not res:
-        raise HTTPException(status_code=401,detail="Student is not found")
+        raise HTTPException(status_code=404,detail="Resume not found")
     
     update_data = payload.model_dump(exclude_unset=True)
     for key,value in update_data.items():
-        setattr(student,key,value)
+        setattr(res,key,value)
     
     db.commit()
     db.refresh(res)

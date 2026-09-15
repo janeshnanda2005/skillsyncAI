@@ -19,13 +19,20 @@ router = APIRouter()
 
 
 
-def _get_student_by_user(current_user: dict, db: Session) -> StudentModel:
+# def _get_student_by_user(current_user: dict, db: Session) -> StudentModel:
+#     email = current_user.get("sub")
+#     student = db.query(StudentModel).filter(StudentModel.email == email).first()
+#     if not student:
+#         raise HTTPException(status_code=404, detail="Student profile not found")
+#     return student
+
+def get_student_by_user(current_user:dict,db:Session) -> StudentModel:
     email = current_user.get("sub")
     student = db.query(StudentModel).filter(StudentModel.email == email).first()
     if not student:
-        raise HTTPException(status_code=404, detail="Student profile not found")
+        raise HTTPException(status_code=404,detail="Student is not found")
     return student
-
+    
 # ── Project endpoints ─────────────────────────────────────────────────────────
 
 @router.post("/add-project", response_model=ProjectResponse, status_code=201)

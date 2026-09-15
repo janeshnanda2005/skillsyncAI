@@ -12,7 +12,7 @@ function Resume(){
     const [file, setFile] = useState(null);
     const [status, setStatus] = useState('');
     const [error, setError] = useState('');
-    const fileInput = useRef(null);
+    const fileInput = useRef(null);  
     const [success, setSuccess] = useState('');
 
 

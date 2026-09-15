@@ -18,14 +18,13 @@ class Student(Base):
 
 
 class User(Base):
-    """Auth account — one per user. Linked to a Student via email."""
     __tablename__ = "users"
 
-    uid        = Column(Integer, primary_key=True, autoincrement=True)
-    name       = Column(String(50), nullable=False)
-    email      = Column(String(50), unique=True, nullable=False)
-    password   = Column(String(10000), nullable=False)
-    created_at = Column(DateTime, nullable=False, server_default="now()")
+    uid = Column(Integer,primary_key = True,autoincrement=True)
+    name = Column(String(50),nullable=False)
+    email = Column(String(50),nullable=False,unique=True)
+    password = Column(String(10000),nullable=False,unique=True)
+    created_At = Column(DateTime,nullable=False,server_default="now()")
 
 
 class Resume(Base):

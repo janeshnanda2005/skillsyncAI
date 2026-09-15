@@ -50,9 +50,9 @@ Session = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 
 def get_db():
-    """FastAPI dependency that yields a DB session and closes it after the request."""
-    db = Session()
-    try:
-        yield db
-    finally:
-        db.close()
+	"""Dependency for getting database session."""
+	db = Session()
+	try:
+		yield db
+	finally:
+		db.close()
