@@ -3,7 +3,7 @@ import axios from 'axios';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Form, Button } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../components/Authcontext';
+import { useAuth } from '../components/useAuth';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 

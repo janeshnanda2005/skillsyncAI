@@ -47,7 +47,10 @@ def add_certification(
 
 @router.get("/my-certifications",response_model=list[CertificationResponse])
 def get_my_certificate(db:Session = Depends(get_db),current_user:dict = Depends(get_current_user)):
-    student = _get_student_by_user(current_user,db)
+    email = current_user.get("sub")
+    student = db.query(StudentModel).filter(StudentModel.email == email).first()
+    if not student:
+        return []
     return db.query(CertModel).filter(CertModel.sid == student.sid).all()                    
 
 @router.get("/student/{student_id}", response_model=list[CertificationResponse])

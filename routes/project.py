@@ -42,7 +42,7 @@ def add_project(
     current_user: dict = Depends(get_current_user),
 ):
     """Create a new project for the logged-in student."""
-    student = _get_student_by_user(current_user, db)
+    student = get_student_by_user(current_user, db)
 
     project = ProjectModel(sid=student.sid, title=payload.title, description=payload.description)
     db.add(project)
@@ -57,7 +57,10 @@ def get_my_projects(
     current_user: dict = Depends(get_current_user),
 ):
     """List all projects owned by the logged-in student."""
-    student = _get_student_by_user(current_user, db)
+    email = current_user.get("sub")
+    student = db.query(StudentModel).filter(StudentModel.email == email).first()
+    if not student:
+        return []
     return db.query(ProjectModel).filter(ProjectModel.sid == student.sid).all()
 
 

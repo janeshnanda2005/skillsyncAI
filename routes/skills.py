@@ -67,7 +67,10 @@ def get_my_skills(
     current_user: dict = Depends(get_current_user),
 ):
     """List all skills of the logged-in student."""
-    student = _get_student_by_user(current_user, db)
+    email = current_user.get("sub")
+    student = db.query(StudentModel).filter(StudentModel.email == email).first()
+    if not student:
+        return []
     return db.query(SkillModel).filter(SkillModel.sid == student.sid).all()
 
 

@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Alert, Button } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../components/Authcontext';
+import { useAuth } from '../components/useAuth';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 

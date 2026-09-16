@@ -24,7 +24,7 @@ class User(Base):
     name = Column(String(50),nullable=False)
     email = Column(String(50),nullable=False,unique=True)
     password = Column(String(10000),nullable=False,unique=True)
-    created_At = Column(DateTime,nullable=False,server_default="now()")
+    created_at = Column(DateTime, nullable=False, server_default="now()")
 
 
 class Resume(Base):

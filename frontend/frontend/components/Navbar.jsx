@@ -1,5 +1,6 @@
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
-import { useAuth } from './Authcontext';
+import { useAuth } from './useAuth';
+import ThemeToggle from './ThemeToggle';
 
 function Navbar() {
 	const { user, logout } = useAuth();
@@ -22,7 +23,12 @@ function Navbar() {
 					<NavLink className="nav-link" to="/add-cert">Credentials</NavLink>
 					<NavLink className="nav-link" to="/upload-resume">Resume</NavLink>
 				</nav>
-				<div className="user-menu"><span className="avatar">{displayName.charAt(0).toUpperCase()}</span><span>{displayName}</span><button className="nav-logout" onClick={handleLogout}>Log out</button></div>
+				<div className="user-menu">
+					<ThemeToggle />
+					<span className="avatar">{displayName.charAt(0).toUpperCase()}</span>
+					<span>{displayName}</span>
+					<button className="nav-logout" onClick={handleLogout}>Log out</button>
+				</div>
 			</div>
 		</header>
 	);

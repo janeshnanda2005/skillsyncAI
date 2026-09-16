@@ -1,16 +1,9 @@
 import { useState } from 'react';
-import axios from 'axios';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Form, Button } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../components/Authcontext';
-
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
-
-export const loginUser = async (email, password) => {
-  const response = await axios.post(`${API_URL}/auth/login`, { email, password });
-  return response.data;
-};
+import { useAuth } from '../components/useAuth';
+import { loginUser } from '../api/auth';
 
 function Login() {
   const { login } = useAuth();
@@ -19,7 +12,6 @@ function Login() {
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState({});
   const [submitError, setSubmitError] = useState('');
-  const [Successmsg,Setsuccess] = useState('');
 
   const validateForm = () => {
     const newErrors = {};
@@ -55,7 +47,6 @@ function Login() {
       const data = await loginUser(email, password);
       login(data);
       setSubmitError('');
-      Setsuccess('Login success');
       navigate('/home');
     } catch (error) {
       setSubmitError(

@@ -136,7 +136,6 @@ class ResumeUpdate(BaseModel):
    file_data:Optional[bytes] =None
     
 
-
 # ─── Admin ───────────────────────────────────────────────────────────────────
 
 class AdminCreate(BaseModel):
