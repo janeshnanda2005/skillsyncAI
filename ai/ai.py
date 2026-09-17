@@ -17,13 +17,17 @@ except ImportError:
 
 load_dotenv()
 
-api = os.getenv("GEMINI_API_KEY")
+api = os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")
 
-llm = ChatGoogleGenerativeAI(
-    model="gemini-2.5-flash",
-    temperature=0.5,
-    google_api_key=api,
-)
+if not api:
+    print("GEMINI_API_KEY is missing. The AI agent will not initialize until the environment variable is set.")
+    llm = None
+else:
+    llm = ChatGoogleGenerativeAI(
+        model="gemini-3.5-flash",
+        temperature=0.5,
+        google_api_key=api,
+    )
 
 
 @tool 
@@ -49,7 +53,8 @@ def retriever_tool(query:str) -> str:
 
 tools = [retriever_tool]
 
-llm = llm.bind_tools(tools=tools)
+if llm is not None:
+    llm = llm.bind_tools(tools=tools)
 
 class AgentState(TypedDict):
     messages : Annotated[Sequence[BaseMessage],add_messages]
@@ -69,6 +74,8 @@ Please always cite the specific parts of the documents you use in your answers.
 tool_dict = {our_tool.name : our_tool for our_tool in tools}
 
 def call_llm(state):
+    if llm is None:
+        return {"messages": [AIMessage(content="Please set GEMINI_API_KEY to enable the AI assistant.")]}
     messages = list(state['messages'])
     messages = [SystemMessage(content=system_prompt)] + messages
     response = llm.invoke(messages)
@@ -114,7 +121,14 @@ def rag():
             break
         messages = [HumanMessage(content=user_input)]
         res = rag_agent.invoke({"messages": messages})
-        print(res["messages"][-1].content)
+        data = res["messages"][-1].content
+        
+        if isinstance(data,list):
+            for item in data:
+                if isinstance(item,dict) and "text" in item:
+                    print(item['text'])
+        else:
+            print(data)
 
 
 if __name__ == "__main__":
