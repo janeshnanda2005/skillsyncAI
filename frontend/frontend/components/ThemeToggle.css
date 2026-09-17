@@ -1,5 +1,10 @@
 .theme-toggle {
   display: inline-flex;
+  width: 68px;
+  height: 38px;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
   padding: 6px;
   border: 2px solid var(--line);
   border-radius: 12px;
@@ -23,6 +28,7 @@
   align-items: center;
   width: 48px;
   height: 26px;
+  box-sizing: border-box;
   padding: 0 3px;
   border-radius: 13px;
   background: var(--paper);

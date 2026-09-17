@@ -119,7 +119,6 @@ class ResumeResponse(BaseModel):
     sid: int
     public_id: str
     file_name: str
-    file_data: bytes 
 
     class Config:
         from_attributes = True

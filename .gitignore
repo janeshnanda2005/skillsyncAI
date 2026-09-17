@@ -11,6 +11,10 @@ venv/
 env/
 ENV/
 
+ai/chromadb
+ai/document.pdf
+
+*/.env
 # ==========================
 # Environment Variables
 # ==========================

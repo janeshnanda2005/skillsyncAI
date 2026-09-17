@@ -1,0 +1,14 @@
+fastapi
+uvicorn
+sqlalchemy
+psycopg2-binary
+pydantic
+python-dotenv
+python-jose
+passlib[bcrypt]
+langchain
+langchain-community
+langchain-google-genai
+langchain-chroma
+langchain-text-splitters
+pypdf
