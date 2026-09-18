@@ -24,6 +24,8 @@ class RegisterRequest(BaseModel):
 class TokenResponse(BaseModel):
     access_token: str
     token_type: str
+    name: str
+    email: str
 
 
 # ─── Student ─────────────────────────────────────────────────────────────────

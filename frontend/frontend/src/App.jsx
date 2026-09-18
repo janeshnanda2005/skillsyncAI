@@ -6,6 +6,7 @@ import Login from '../pages/Login'
 import Skills from '../pages/Skills'
 import NotFound from '../pages/404'
 import Cert from '../pages/Certification'
+import Me from  '../pages/me'
 import Project from '../pages/Project'
 import Resume from '../pages/Resume'  
 import Signup from '../pages/Signup'
@@ -23,6 +24,7 @@ function App() {
             <Route path="/signup" element={<Signup />} />
             <Route element={<AppShell />}>
             <Route path="*" element={<NotFound/>}/>
+            <Route path="/student-me" element={<Me/>}/>
               <Route path="/home" element={<Home />} />
               <Route path="/add-project" element={<Project/>}/>
               <Route path="/upload-resume" element={<Resume />} />

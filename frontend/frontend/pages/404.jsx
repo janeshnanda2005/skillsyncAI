@@ -9,7 +9,7 @@ const NotFound = () => {
             <p style={styles.message}>
                 The Page you are looking for might be removed,had its name changed or is temporarily unavailable at the moment.
             </p>
-            <Link to="/" style={styles.homeButton}>
+            <Link to="/home" style={styles.homeButton}>
                 Back to home
             </Link>
         </div>

@@ -1,6 +1,7 @@
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { useAuth } from './useAuth';
 import ThemeToggle from './ThemeToggle';
+import { Alert,Button } from 'react-bootstrap';
 
 function Navbar() {
 	const { user, logout } = useAuth();
@@ -11,6 +12,8 @@ function Navbar() {
 		logout();
 		navigate('/login');
 	};
+
+	const buttonradius = {borderRadius:'50%'}
 
 	return (
 		<header className="site-nav">
@@ -25,8 +28,10 @@ function Navbar() {
 				</nav>
 				<div className="user-menu">
 					<ThemeToggle />
-					<span className="avatar">{displayName.charAt(0).toUpperCase()}</span>
-					<span>{displayName}</span>
+					<Button as={NavLink} to="/student-me" className='w-12 h-12 rounded-full p-0' style={buttonradius}>
+						<span className="avatar">{displayName.charAt(0).toUpperCase()}</span>
+					</Button>
+					<span>{displayName}</span> 
 					<button className="nav-logout" onClick={handleLogout}>Log out</button>
 				</div>
 			</div>
