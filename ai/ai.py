@@ -1,6 +1,12 @@
+"""
+This is the Python file which uses RAG to Access the Contents present in the document
+
+"""
+
 from typing import TypedDict, Sequence, Annotated
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.messages import BaseMessage, AIMessage, HumanMessage, SystemMessage, ToolMessage
+from langchain_google_genai.chat_models import GoogleRateLimitError
 from langchain_openrouter import ChatOpenRouter
 from tqdm import tqdm
 from operator import add as add_messages
@@ -20,23 +26,31 @@ except ImportError:
 load_dotenv()
 
 api = os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")
+openrouter_api_key = os.getenv("OPENROUTER_API_KEY")
 
-llm = None
-api = None
-
-
-if not api:
-    print("GEMINI_API_KEY is missing. The AI agent will not initialize until the environment variable is set.")
-    fallback_model = ChatOpenRouter(
-        model="nvidia/nemotron-3-ultra-550b-a55b:free",
-        temperature=0.5
-    )
-else:
-    llm = ChatGoogleGenerativeAI(
-        model="gemini-3.5-flash",
+prime_model = None
+if api:
+    prime_model = ChatGoogleGenerativeAI(
+        model="gemini-2.0-flash",
         temperature=0.5,
         google_api_key=api,
     )
+else:
+    print("GEMINI_API_KEY is missing. Gemini model is unavailable.")
+
+fallback_model = None
+if openrouter_api_key:
+    fallback_model = ChatOpenRouter(
+        model="openai/gpt-4o-mini",
+        temperature=0.5,
+        openrouter_api_key=openrouter_api_key,
+    )
+else:
+    print("OPENROUTER_API_KEY is missing. OpenRouter fallback is disabled.")
+
+llm = prime_model
+if llm is not None and fallback_model is not None:
+    llm = llm.with_fallbacks([fallback_model])
 
 
 @tool 
@@ -64,11 +78,19 @@ tools = [retriever_tool]
 
 if llm is not None:
     llm = llm.bind_tools(tools=tools)
-else:
-    fallback_model = fallback_model.bind_tools(tools=tools)
+
 
 class AgentState(TypedDict):
     messages : Annotated[Sequence[BaseMessage],add_messages]
+
+
+def _rate_limit_response() -> AIMessage:
+    return AIMessage(
+        content=(
+            "The AI model is rate-limited because the Gemini free quota has been exhausted. "
+            "Please wait a while and retry, or add a valid API key / paid plan and restart the app."
+        )
+    )
 
 def should_continue(state:AgentState):
     result = state["messages"][-1]
@@ -80,21 +102,43 @@ You are an intelligent AI assistant who answers questions about Resume having im
 Use the retriever tool available to answer questions about the data which is present in the document. You can make multiple calls if needed.
 If you need to look up some information before asking a follow up question, you are allowed to do that!
 Please always cite the specific parts of the documents you use in your answers.
+Also You need to generate your answers They may ask doubts regarding their resume tell what do improve based on Structure of Resume,Skills and suggest them 
+Frameworks for the development of the Resume and answer the student asking the questions in a structured manner.
 
 """
 tool_dict = {our_tool.name : our_tool for our_tool in tools}
 
 def call_llm(state):
-    if llm is None:
-        messages = list(state['messages'])
-        messages = [SystemMessage(content=system_prompt)] + messages
-        response = fallback_model.invoke(messages)
-        return {"messages":[response]}
-
     messages = list(state['messages'])
+
+    if llm is None:
+        return {
+            "messages": [
+                AIMessage(
+                    content=(
+                        "The AI model is unavailable because no valid Gemini/OpenRouter API key is configured. "
+                        "Please add the required key and restart the app."
+                    )
+                )
+            ]
+        }
+
     messages = [SystemMessage(content=system_prompt)] + messages
-    response = llm.invoke(messages)
-    return {"messages":[response]}
+
+    try:
+        response = llm.invoke(messages)
+    except GoogleRateLimitError:
+        return {"messages": [_rate_limit_response()]}
+    except Exception:
+        return {
+            "messages": [
+                AIMessage(
+                    content="The model request failed due to an API or quota issue. Please retry later."
+                )
+            ]
+        }
+
+    return {"messages": [response]}
 
 def take_action(state):
     tool_calls = state["messages"][-1].tool_calls
@@ -127,6 +171,9 @@ graph.add_edge("retriever_agent","llm")
 graph.set_entry_point("llm")
 
 rag_agent = graph.compile()
+
+def draw_rag():
+    return rag_agent
 
 def rag():
     while True:
