@@ -19,7 +19,7 @@ except ImportError:
 
 load_dotenv()
 
-# api = os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")
+api = os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")
 
 llm = None
 api = None
