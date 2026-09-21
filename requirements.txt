@@ -9,6 +9,7 @@ passlib[bcrypt]
 langchain
 langchain-community
 langchain-google-genai
+langchain-openrouter
 langchain-chroma
 langchain-text-splitters
 pypdf

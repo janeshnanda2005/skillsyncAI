@@ -45,6 +45,13 @@ function Login() {
 
     try {
       const data = await loginUser(email, password);
+      const { access_token, token_type, name, email: userEmail } = data;
+
+      console.log('Access Token:', access_token);
+      console.log('Token Type:', token_type);
+      console.log('User Name:', name);
+      console.log('User Email:', userEmail);
+
       login(data);
       setSubmitError('');
       navigate('/home');

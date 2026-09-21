@@ -15,7 +15,7 @@ api = os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")
 def establish_connection():
     conn = psycopg2.connect(
         host="localhost",
-        port=5432,
+        port=5432,  
         database="skillsyncai",
         user="postgres",
         password=DB_PASSWORD

@@ -2,18 +2,24 @@
 This is the Python file which uses RAG to Access the Contents present in the document
 
 """
-
 from typing import TypedDict, Sequence, Annotated
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.messages import BaseMessage, AIMessage, HumanMessage, SystemMessage, ToolMessage
 from langchain_google_genai.chat_models import GoogleRateLimitError
-from langchain_openrouter import ChatOpenRouter
 from tqdm import tqdm
 from operator import add as add_messages
 from langgraph.graph import START, END, StateGraph
 from langchain.tools import tool
 from dotenv import load_dotenv
 import os
+from pathlib import Path
+
+load_dotenv(dotenv_path=Path(__file__).resolve().parent / ".env")
+
+try:
+    from langchain_openrouter import ChatOpenRouter
+except ImportError:
+    ChatOpenRouter = None
 
 try:
     from ai.docloader import retriever
@@ -23,34 +29,38 @@ except ImportError:
     except ImportError:
         retriever = None
 
-load_dotenv()
 
-api = os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")
-openrouter_api_key = os.getenv("OPENROUTER_API_KEY")
 
-prime_model = None
-if api:
-    prime_model = ChatGoogleGenerativeAI(
-        model="gemini-2.0-flash",
-        temperature=0.5,
-        google_api_key=api,
-    )
-else:
-    print("GEMINI_API_KEY is missing. Gemini model is unavailable.")
+def model_initalization():
+    api = os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")
+    openrouter_api_key = os.getenv("OPENROUTER_API_KEY")
+    prime_model = None
+    if api:
+        prime_model = ChatGoogleGenerativeAI(
+            model="gemini-3.6-flash",
+            temperature=0.5,
+            google_api_key=api,
+        )
+    else:
+        print("GEMINI_API_KEY is missing. Gemini model is unavailable.")
 
-fallback_model = None
-if openrouter_api_key:
-    fallback_model = ChatOpenRouter(
-        model="openai/gpt-4o-mini",
-        temperature=0.5,
-        openrouter_api_key=openrouter_api_key,
-    )
-else:
-    print("OPENROUTER_API_KEY is missing. OpenRouter fallback is disabled.")
+    fallback_model = None
+    if openrouter_api_key and ChatOpenRouter is not None:
+        fallback_model = ChatOpenRouter(
+            model="openai/gpt-4o-mini",
+            temperature=0.5,
+            openrouter_api_key=openrouter_api_key,
+        )
+    elif openrouter_api_key:
+        print("langchain-openrouter is missing. OpenRouter fallback is disabled.")
+    else:
+        print("OPENROUTER_API_KEY is missing. OpenRouter fallback is disabled.")
 
-llm = prime_model
-if llm is not None and fallback_model is not None:
-    llm = llm.with_fallbacks([fallback_model])
+    llm = prime_model
+    if llm is not None and fallback_model is not None:
+        llm = llm.with_fallbacks([fallback_model])
+    
+    return llm
 
 
 @tool 
@@ -74,10 +84,9 @@ def retriever_tool(query:str) -> str:
     
     return "\n\n".join(results)
 
-tools = [retriever_tool]
+# tools = [retriever_tool]
 
-if llm is not None:
-    llm = llm.bind_tools(tools=tools)
+# llm = llm.bind_tools(tools=tools)
 
 
 class AgentState(TypedDict):
@@ -91,6 +100,12 @@ def _rate_limit_response() -> AIMessage:
             "Please wait a while and retry, or add a valid API key / paid plan and restart the app."
         )
     )
+
+
+def _is_rate_limit_error(error: Exception) -> bool:
+    status_code = getattr(error, "status_code", None)
+    message = str(error).lower()
+    return status_code == 429 or "quota" in message or "rate limit" in message or "rate_limit" in message
 
 def should_continue(state:AgentState):
     result = state["messages"][-1]
@@ -106,7 +121,7 @@ Also You need to generate your answers They may ask doubts regarding their resum
 Frameworks for the development of the Resume and answer the student asking the questions in a structured manner.
 
 """
-tool_dict = {our_tool.name : our_tool for our_tool in tools}
+# tool_dict = {tool_instance.name: tool_instance for tool_instance in tools}
 
 def call_llm(state):
     messages = list(state['messages'])
@@ -129,7 +144,9 @@ def call_llm(state):
         response = llm.invoke(messages)
     except GoogleRateLimitError:
         return {"messages": [_rate_limit_response()]}
-    except Exception:
+    except Exception as error:
+        if _is_rate_limit_error(error):
+            return {"messages": [_rate_limit_response()]}
         return {
             "messages": [
                 AIMessage(
@@ -157,25 +174,25 @@ def take_action(state):
     return {"messages":result}
 
 
-graph = StateGraph(AgentState)
-graph.add_node('llm',call_llm)
-graph.add_node("retriever_agent",take_action)
+# graph = StateGraph(AgentState)
+# graph.add_node('llm',call_llm)
+# graph.add_node("retriever_agent",take_action)
 
-graph.add_conditional_edges(
-    'llm',
-    should_continue,
-    {True:"retriever_agent",False:END}
-)
+# graph.add_conditional_edges(
+#     'llm',
+#     should_continue,
+#     {True:"retriever_agent",False:END}
+# )
 
-graph.add_edge("retriever_agent","llm")
-graph.set_entry_point("llm")
+# graph.add_edge("retriever_agent","llm")
+# graph.set_entry_point("llm")
 
-rag_agent = graph.compile()
+# rag_agent = graph.compile()
 
 def draw_rag():
     return rag_agent
 
-def rag():
+def cmd_rag():
     while True:
         user_input = input("Enter the Question: ")
         if user_input.lower() in ['quit', 'exit']:
@@ -191,6 +208,23 @@ def rag():
         else:
             print(data)
 
+def rag(data):
+    while True:
+        user_input = data
+        if user_input.lower() in ['quit', 'exit']:
+            break
+        messages = [HumanMessage(content=user_input)]
+        res = rag_agent.invoke({"messages": messages})
+        response = res["messages"][-1].content
+        
+        if isinstance(response,list):
+            for item in response:
+                if isinstance(item,dict) and "text" in item:
+                    return item['text']
+        else:
+            return response
+
+
 
 if __name__ == "__main__":
-    rag()
+    cmd_rag()

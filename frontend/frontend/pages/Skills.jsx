@@ -192,6 +192,7 @@ function Skills() {
 
   useEffect(() => {
     if (!user?.access_token) return;
+    console.log(user?.access_token);
 
     axios.get(`${API_URL}/skills/my-skills`, {
       headers: { Authorization: `Bearer ${user.access_token}` },

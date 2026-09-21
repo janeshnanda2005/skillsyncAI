@@ -132,6 +132,9 @@ class ResumeCreate(BaseModel):
     file_name:str
     file_data: bytes
 
+class Resumegist(BaseModel):
+    msg:str
+
 class ResumeUpdate(BaseModel):
    file_name:Optional[str] = None
    file_data:Optional[bytes] =None
