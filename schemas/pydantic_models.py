@@ -1,4 +1,4 @@
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, ConfigDict, EmailStr
 from typing import Optional
 from datetime import datetime
 
@@ -49,6 +49,8 @@ class StudentUpdate(BaseModel):
 
 
 class StudentResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     sid: int
     name: str
     dept: str
@@ -58,10 +60,6 @@ class StudentResponse(BaseModel):
     domain: str
     created_at: datetime
 
-    class Config:
-        from_attributes = True   # Pydantic v2; use orm_mode=True for v1
-
-
 # ─── Skills ──────────────────────────────────────────────────────────────────
 
 class SkillCreate(BaseModel):
@@ -69,13 +67,11 @@ class SkillCreate(BaseModel):
 
 
 class SkillResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     skill_id: int
     sid: int
     title: str
-
-    class Config:
-        from_attributes = True
-
 
 # ─── Certifications ──────────────────────────────────────────────────────────
 
@@ -84,13 +80,11 @@ class CertificationCreate(BaseModel):
 
 
 class CertificationResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     cert_id: int
     sid: int
     title: str
-
-    class Config:
-        from_attributes = True
-
 
 # ─── Projects (student-owned) ────────────────────────────────────────────────
 
@@ -105,25 +99,22 @@ class ProjectUpdate(BaseModel):
 
 
 class ProjectResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     pid: int
     sid: int
     title: str
     description: str
 
-    class Config:
-        from_attributes = True
-
-
 # ─── Resume ──────────────────────────────────────────────────────────────────
 
 class ResumeResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     r_id: int
     sid: int
     public_id: str
     file_name: str
-
-    class Config:
-        from_attributes = True
 
 class ResumeCreate(BaseModel):
     r_id:int
@@ -155,14 +146,12 @@ class AdminLogin(BaseModel):
 
 
 class AdminResponse(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
     aid: int
     name: str
     email: str
     created_at: datetime
-
-    class Config:
-        from_attributes = True
-
 
 # ─── Legacy aliases (kept so old imports don't break) ─────────────────────────
 

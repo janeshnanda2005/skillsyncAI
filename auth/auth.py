@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from jose import JWTError, jwt
 from fastapi import HTTPException, Header, Query
 from dotenv import load_dotenv
@@ -34,7 +34,7 @@ def verify_password(plain_password: str, hashed_password: str):
 def create_access_token(data: dict):
     payload = data.copy()
 
-    payload['exp'] = datetime.utcnow()+timedelta(minutes=int(ACCESS_TOKEN_EXPIRE_MINUTES))
+    payload['exp'] = datetime.now(timezone.utc) + timedelta(minutes=int(ACCESS_TOKEN_EXPIRE_MINUTES))
 
     return jwt.encode(
         payload,

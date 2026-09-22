@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
@@ -25,7 +25,7 @@ def register_admin(payload: AdminCreate, db: Session = Depends(get_db)):
         name=payload.name,
         email=payload.email,
         password=hash_password(payload.password),
-        created_at=datetime.utcnow(),
+        created_at=datetime.now(timezone.utc),
     )
     db.add(admin)
     db.commit()

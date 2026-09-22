@@ -1,14 +1,10 @@
 from uuid import uuid4
-from typing import TypedDict,Annotated,Sequence
+import re
 from fastapi import APIRouter, Depends, File, HTTPException, UploadFile
-from langchain_core.messages import HumanMessage,AIMessage,BaseMessage
-from langgraph.graph import StateGraph,START,END
+from langchain_core.messages import HumanMessage, SystemMessage
 from sqlalchemy.orm import Session
-from ai.ai import take_action, call_llm , system_prompt,retriever_tool ,model_initalization,should_continue
-from ai.ai import rag
+from ai.ai import model_initalization, system_prompt
 from ai.main_docloader import embedding_documents
-from pathlib import Path
-from operator import add as add_messages
 from database.database import get_db
 from auth.auth import get_current_user
 from models.basemodel import Resume, Student
@@ -16,8 +12,27 @@ from schemas.pydantic_models import ResumeResponse,ResumeUpdate,Resumegist
 
 router = APIRouter()
 
-class AgentState(TypedDict):
-    messages : Annotated[Sequence[BaseMessage],add_messages]
+
+def _clean_ai_content(content) -> str:
+    if isinstance(content, str):
+        text = content
+    elif isinstance(content, dict):
+        text = content.get("text", content.get("content", ""))
+        return _clean_ai_content(text)
+    elif isinstance(content, list):
+        text = "\n".join(
+            _clean_ai_content(item) for item in content
+            if isinstance(item, (str, dict, list))
+        )
+    else:
+        text = str(content)
+
+    text = re.sub(r"```(?:\w+)?", "", text)
+    text = re.sub(r"(^|\n)\s*#{1,6}\s*", r"\1", text)
+    text = re.sub(r"(^|\n)\s*[-*+]\s+", r"\1", text)
+    text = re.sub(r"\*{1,3}|_{1,3}", "", text)
+    text = re.sub(r"\s+", " ", text)
+    return text.strip()
 
 
 @router.post("/gist-model",status_code=200)
@@ -26,61 +41,44 @@ async def resume_gist(
     payload:Resumegist,
     db: Session = Depends(get_db),
     current_user = Depends(get_current_user)):
-    
-    if payload is None:
-        raise HTTPException("The payload is empty")
-    
-    resume = db.get(Resume).filter(Resume.r_id == resumeid).first()
-    res = resume.file_data
-    if not res:
-        raise HTTPException(status_code=404,detail="Resume is not found")
 
-    retriver = embedding_documents(res)
+    if not payload.msg.strip():
+        raise HTTPException(status_code=400, detail="The payload is empty")
+
+    resume = db.query(Resume).filter(Resume.r_id == resumeid).first()
+    if not resume:
+        raise HTTPException(status_code=404, detail="Resume is not found")
+
+    if not resume.file_data:
+        raise HTTPException(status_code=404, detail="file_data is not found")
+
+    retriever = embedding_documents(resume.file_data)
+    if retriever is None:
+        raise HTTPException(status_code=503, detail="Resume retriever is unavailable")
 
     llm = model_initalization()
+    if llm is None:
+        raise HTTPException(status_code=503, detail="AI model is unavailable")
 
-    tools = [retriever_tool]
+    documents = retriever.invoke(payload.msg)
+    context = "\n\n".join(document.page_content for document in documents)
+    messages = [
+        SystemMessage(content=system_prompt),
+        HumanMessage(
+            content=(
+                f"Resume context:\n{context}\n\n"
+                f"Question: {payload.msg}"
+            )
+        ),
+    ]
 
-    llm = llm.bind_tools(tools=tools)
-
-    tool_dict = {tool_instance.name : tool_instance for tool_instance in tools}
-
-
-    graph = StateGraph(AgentState)
-    graph.add_edge("llm",call_llm)
-    graph.add_edge("retriever_agent",take_action)
-
-    graph.add_conditional_edges(
-        "llm",
-        should_continue,
-        {True:"retriever_agent",False:END}
-    )
-
-    graph.add_edge("retriever_agent","llm")
-    graph.set_entry_point("llm")
-
-    rag_agent = graph.compile()
-
-    while True:
-        user_input = payload.data 
-        if user_input.lower() in ['quit','exit']:
-            print("Thank you for your time with us!")
-            break
-        message = [HumanMessage(content=user_input)]
-        res = rag_agent.invoke({"messages":message})
-        response = res["message"][-1].content
-
-        if isinstance(response,list):
-            for item in response:
-                if isinstance(item,dict) and "text" in item:
-                    return item['text']
-        else:
-            return response
+    response = llm.invoke(messages)
+    return _clean_ai_content(response.content)
 
 
 
 
-@router.post("/upload-resume",response_model=ResumeResponse,status_code=201)
+@router.post("/upload-resume",response_model = ResumeResponse,status_code = 201)
 async def add_resume(
     file: UploadFile = File(...),
     db: Session = Depends(get_db),

@@ -4,6 +4,7 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
 import os
 import psycopg2
+import tempfile
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -18,14 +19,19 @@ def embedding_documents(data):
             google_api_key=api
         )
 
-    pdf = PyPDFLoader(data)
+    with tempfile.NamedTemporaryFile(suffix=".pdf", delete=False) as pdf_file:
+        pdf_file.write(data)
+        pdf_path = pdf_file.name
 
-    splitter = RecursiveCharacterTextSplitter(
-            chunk_size=1000,
-            chunk_overlap=200
-    )
-
-    pdf_splitter = splitter.split_documents(pdf.load())
+    try:
+        pdf = PyPDFLoader(pdf_path)
+        splitter = RecursiveCharacterTextSplitter(
+                chunk_size=1000,
+                chunk_overlap=200
+        )
+        pdf_splitter = splitter.split_documents(pdf.load())
+    finally:
+        os.unlink(pdf_path)
 
     persist_dir = "./chromadb"
     collection = "pdf_data"
@@ -37,7 +43,7 @@ def embedding_documents(data):
 
     vectordb = None
     try:
-        vectordb = Chroma.from_documents(   
+        vectordb = Chroma.from_documents(
                 persist_directory=persist_dir,
                 collection_name=collection,
                 documents=pdf_splitter,
@@ -50,8 +56,8 @@ def embedding_documents(data):
     if vectordb:
         global retriever
         retriever = vectordb.as_retriever(
-            search_kwargs={"k":5},
-            similarity="simiarity"
+            search_kwargs={"k": 5},
+            search_type="similarity"
         )
         print("The Vector Database is initialized and the retriever will work")
     else:

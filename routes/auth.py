@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import JSONResponse
@@ -26,7 +26,7 @@ def register_user(request: RegisterRequest, db: Session = Depends(get_db)):
         name=request.name,
         email=request.email,
         password=hash_password(request.password),
-        created_at=datetime.utcnow(),
+        created_at=datetime.now(timezone.utc),
     )
     db.add(db_user)
     db.commit()
