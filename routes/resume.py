@@ -1,6 +1,6 @@
 from uuid import uuid4
 import re
-from fastapi import APIRouter, Depends, File, HTTPException, UploadFile
+from fastapi import APIRouter, Depends, File, HTTPException, Query, UploadFile
 from langchain_core.messages import HumanMessage, SystemMessage
 from sqlalchemy.orm import Session
 from ai.ai import model_initalization, system_prompt
@@ -37,15 +37,23 @@ def _clean_ai_content(content) -> str:
 
 @router.post("/gist-model",status_code=200)
 async def resume_gist(
-    resumeid:int,
-    payload:Resumegist,
-    db: Session = Depends(get_db),
+    payload : Resumegist,
+    resumeid: int | None = Query(default=None),
+    db : Session = Depends(get_db),
     current_user = Depends(get_current_user)):
 
     if not payload.msg.strip():
         raise HTTPException(status_code=400, detail="The payload is empty")
 
-    resume = db.query(Resume).filter(Resume.r_id == resumeid).first()
+    student = db.query(Student).filter(Student.email == current_user.get("sub")).first()
+    if not student:
+        raise HTTPException(status_code=404, detail="Student profile not found")
+
+    resume_query = db.query(Resume).filter(Resume.sid == student.sid)
+    if resumeid is not None:
+        resume_query = resume_query.filter(Resume.r_id == resumeid)
+
+    resume = resume_query.first()
     if not resume:
         raise HTTPException(status_code=404, detail="Resume is not found")
 
