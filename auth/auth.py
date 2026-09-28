@@ -33,41 +33,19 @@ def verify_password(plain_password: str, hashed_password: str):
 
 def create_access_token(data: dict):
     payload = data.copy()
-
     payload['exp'] = datetime.now(timezone.utc) + timedelta(minutes=int(ACCESS_TOKEN_EXPIRE_MINUTES))
-
-    return jwt.encode(
-        payload,
-        SECRET_KEY,
-        algorithm=ALGORITHM
-    )
+    return jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
 
 
 def verify_token(token: str):
-
     try:
-        payload = jwt.decode(
-            token,
-            SECRET_KEY,
-            algorithms=[ALGORITHM]
-        )
-
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         username = payload.get("sub")
-
         if username is None:
-            raise HTTPException(
-                status_code=401,
-                detail="Invalid token"
-            )
-
+            raise HTTPException(status_code=401, detail="Invalid token")
         return payload
-
     except JWTError:
-
-        raise HTTPException(
-            status_code=401,
-            detail="Token expired or invalid"
-        )
+        raise HTTPException(status_code=401, detail="Token expired or invalid")
 
 
 def get_current_user(
@@ -75,13 +53,10 @@ def get_current_user(
     token: str | None = Query(default=None, alias="token"),
 ):
     raw_token = token
-
     if authorization:
         if not authorization.lower().startswith("bearer "):
             raise HTTPException(status_code=401, detail="Invalid authentication scheme")
         raw_token = authorization.split(" ", 1)[1]
-
     if not raw_token:
         raise HTTPException(status_code=401, detail="Not authenticated")
-
     return verify_token(raw_token)

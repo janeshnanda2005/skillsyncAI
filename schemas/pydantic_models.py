@@ -5,13 +5,9 @@ from datetime import datetime
 
 # ─── Auth ───────────────────────────────────────────────────────────────────
 
-# class LoginRequest(BaseModel):
-#     email: str
-#     password: str
-
 class LoginRequest(BaseModel):
-    email:str
-    password:str
+    email: str
+    password: str
 
 
 class RegisterRequest(BaseModel):

@@ -110,11 +110,18 @@ Please always cite the specific parts of the documents you use in your answers.
 
 tools_dict = {our_tool.name:our_tool for our_tool in tools}
 
-def call_llm (state):
+# def call_llm (state):
+#   messages = list(state['messages'])
+#   messages = [SystemMessage(content=system_prompt)] + messages
+#   message = llm.invoke(messages)
+#   return {"messages":[message]}
+
+def call_llm(state:AgentState) -> AgentState:
   messages = list(state['messages'])
-  messages = [SystemMessage(content=system_prompt)] + messages
-  message = llm.invoke(messages)
-  return {"messages":[message]}
+  messages = [SystemMessage(content=system_prompt)]+messages
+  messages = llm.invoke(messages)
+  return {"messages":[messages]}
+
 
 def take_action(state):
 

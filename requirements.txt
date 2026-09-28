@@ -4,8 +4,9 @@ sqlalchemy
 psycopg2-binary
 pydantic
 python-dotenv
-python-jose
 passlib[bcrypt]
+google-auth
+httpx
 langchain
 langchain-community
 langchain-google-genai

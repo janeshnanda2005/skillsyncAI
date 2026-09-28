@@ -8,6 +8,7 @@ from models.basemodel import (
     Student as StudentModel,
     Project as ProjectModel,
 )
+
 from schemas.pydantic_models import (
     ProjectCreate,
     ProjectUpdate,
@@ -44,7 +45,8 @@ def add_project(
     """Create a new project for the logged-in student."""
     student = get_student_by_user(current_user, db)
 
-    project = ProjectModel(sid=student.sid, title=payload.title, description=payload.description)
+
+    project = ProjectModel(sid=student.sid,title=payload.title,description=payload.description)
     db.add(project)
     db.commit()
     db.refresh(project)
@@ -71,10 +73,10 @@ def get_projects_by_student(
     current_user: dict = Depends(get_current_user),
 ):
     """List all projects for a specific student."""
-    student = db.query(StudentModel).filter(StudentModel.sid == student_id).first()
+    student = get_student_by_user(current_user,db)
     if not student:
         raise HTTPException(status_code=404, detail="Student not found")
-    return db.query(ProjectModel).filter(ProjectModel.sid == student_id).all()
+    return db.query(ProjectModel).filter(ProjectModel.sid == student.sid).all()
 
 
 @router.put("/update-project/{project_id}", response_model=ProjectResponse)
@@ -96,7 +98,7 @@ def update_project(
 
     update_data = payload.model_dump(exclude_unset=True)
     for key, value in update_data.items():
-        setattr(project, key, value)
+        setattr(project, key, value)    
 
     db.commit()
     db.refresh(project)

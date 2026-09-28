@@ -36,10 +36,8 @@ def register_admin(payload: AdminCreate, db: Session = Depends(get_db)):
 @router.post("/login")
 def login_admin(payload: AdminLogin, db: Session = Depends(get_db)):
     admin = db.query(AdminModel).filter(AdminModel.email == payload.email).first()
-
     if not admin or not verify_password(payload.password, admin.password):
         raise HTTPException(status_code=401, detail="invalid email or password")
-
     token = create_access_token(data={"sub": admin.email, "role": "admin"})
     return {"access_token": token, "token_type": "bearer"}
 
