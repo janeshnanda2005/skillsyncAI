@@ -12,6 +12,7 @@ import Project from '../pages/Project'
 import Resume from '../pages/Resume'  
 import Signup from '../pages/Signup'
 import Home from '../pages/Home'
+import StudentDetails from '../pages/StudentDetails'
 import './App.css'
 
 function App() {
@@ -26,6 +27,7 @@ function App() {
             <Route element={<AppShell />}>
             <Route path="*" element={<NotFound/>}/>
             <Route path="/student-me" element={<Me/>}/>
+            <Route path="/student-details" element={<StudentDetails/>}/>
             <Route path="/gist-model" element={<AnalyseResume/>}/>
               <Route path="/home" element={<Home />} />
               <Route path="/add-project" element={<Project/>}/>

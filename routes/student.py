@@ -10,8 +10,6 @@ from auth.auth import get_current_user
 
 router = APIRouter()
 
-
-
 @router.get("/get-student-details",response_model=StudentResponse)
 def student_details(
     student_id:int,
@@ -55,6 +53,8 @@ def add_student(
         dept=student.dept,
         email=student.email,
         year=student.year,
+        cgpa=student.cgpa,
+        domain=student.domain,
         created_at=datetime.now(timezone.utc),
     )
 

@@ -32,6 +32,8 @@ class StudentCreate(BaseModel):
     dept: str
     email: str
     year: int
+    cgpa: float
+    domain: str
 
 
 class StudentUpdate(BaseModel):

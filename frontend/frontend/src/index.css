@@ -53,6 +53,25 @@ body {
   transition: background 0.3s ease, color 0.3s ease;
 }
 
+html[data-theme="dark"],
+html[data-theme="dark"] body,
+html[data-theme="dark"] #root,
+html[data-theme="dark"] .app-shell,
+html[data-theme="dark"] .site-main {
+  background-color: var(--paper);
+  color: var(--ink);
+}
+
+html[data-theme="dark"] .text-muted,
+html[data-theme="dark"] .card-text {
+  color: var(--muted) !important;
+}
+
+html[data-theme="dark"] .btn-outline-danger {
+  color: var(--danger);
+  border-color: var(--danger);
+}
+
 #root {
   min-height: 100svh;
 }

@@ -154,3 +154,14 @@ def update_resume(
     db.refresh(res)
     return res
 
+@router.get("/get-resume",reponsemodel=ResumeResponse,status_code=200)
+def get_resume(db:Session = Depends(get_db),current_user:dict = Depends(get_current_user)):
+
+    student_resume = db.query(Resume).filter(Resume.sid == Student.sid).first()
+    if not student_resume:
+        raise HTTPException(status_code=404,detail="Resume not found")
+
+    fname = student_resume.file_name
+
+    return fname
+

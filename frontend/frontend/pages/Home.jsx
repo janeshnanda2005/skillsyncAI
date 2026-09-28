@@ -83,6 +83,16 @@ function Home() {
         <div className="col-md-4">
           <div className="card h-100 shadow-sm border-0">
             <div className="card-body">
+              <h5 className="card-title">Student Details</h5>
+              <p className="card-text text-muted">Add the necessary student data for tracking purposes</p>
+              <Button onClick={() => navigate('/student-details')}>Edit Student Details</Button>
+            </div>
+          </div>
+        </div>
+
+        <div className="col-md-4">
+          <div className="card h-100 shadow-sm border-0">
+            <div className="card-body">
               <h5 className="card-title">Resume</h5>
               <p className="card-text text-muted">Upload your current Resume for prediction</p>
               <Button onClick={() => navigate('/upload-resume')}>Edit Resume</Button>

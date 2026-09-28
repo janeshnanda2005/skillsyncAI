@@ -75,6 +75,23 @@ function Resume(){
         }
     };
 
+    const get_url = (event) => {
+
+        try{
+            response = axios.get(`${API_URL}/resume/get-resume`,{
+                headers :{
+                    Authorization: `Bearer ${token}`
+                },
+            })
+        }
+        catch(err){
+            setError("Unable to get you name of the resume");
+            setSuccess("");
+            setStatus("");
+        }
+
+    };
+
     return (
             <div className="container py-5">
                 <div className="mx-auto" style={{maxWidth:'500px'}}>
@@ -100,6 +117,9 @@ function Resume(){
                         <Button type="submit" disabled={Boolean(status)}>
                             Upload Resume
                         </Button>
+                        <div>
+                            <h1></h1>
+                        </div>
                     </Form>
                 </div>
 
