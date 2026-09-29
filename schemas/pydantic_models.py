@@ -127,6 +127,9 @@ class Resumegist(BaseModel):
 class ResumeUpdate(BaseModel):
    file_name:Optional[str] = None
    file_data:Optional[bytes] =None
+
+class ResumeName(BaseModel):
+    file_name:str
     
 
 # ─── Admin ───────────────────────────────────────────────────────────────────

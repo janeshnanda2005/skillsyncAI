@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useEffect, useState, useRef } from "react";
 import axios from 'axios';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Alert, Form, Button } from 'react-bootstrap';
@@ -14,6 +14,7 @@ function Resume(){
     const [error, setError] = useState('');
     const fileInput = useRef(null);  
     const [success, setSuccess] = useState('');
+    const [resumeName, setResumeName] = useState('');
 
 
 
@@ -75,22 +76,26 @@ function Resume(){
         }
     };
 
-    const get_url = (event) => {
+    useEffect(() => {
+        const getResumeName = async () => {
+            if (!user?.access_token) return;
 
-        try{
-            response = axios.get(`${API_URL}/resume/get-resume`,{
-                headers :{
-                    Authorization: `Bearer ${token}`
-                },
-            })
-        }
-        catch(err){
-            setError("Unable to get you name of the resume");
-            setSuccess("");
-            setStatus("");
-        }
+            try {
+                const response = await axios.get(`${API_URL}/resume/get-resume`, {
+                    headers: {
+                        Authorization: `Bearer ${user.access_token}`,
+                    },
+                });
+                setResumeName(response.data.file_name);
+            } catch (requestError) {
+                if (requestError.response?.status !== 404) {
+                    setError(requestError.response?.data?.detail || 'Unable to load your resume.');
+                }
+            }
+        };
 
-    };
+        getResumeName();
+    }, [user?.access_token]);
 
     return (
             <div className="container py-5">
@@ -114,6 +119,7 @@ function Resume(){
                                 />
                                 {file && <Form.Text>{file.name}</Form.Text>}
                         </Form.Group>
+                        {resumeName && <p className="text-muted">Current resume: {resumeName}</p>}
                         <Button type="submit" disabled={Boolean(status)}>
                             Upload Resume
                         </Button>

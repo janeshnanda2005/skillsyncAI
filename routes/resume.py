@@ -8,7 +8,7 @@ from ai.main_docloader import embedding_documents
 from database.database import get_db
 from auth.auth import get_current_user
 from models.basemodel import Resume, Student
-from schemas.pydantic_models import ResumeResponse,ResumeUpdate,Resumegist
+from schemas.pydantic_models import ResumeResponse,ResumeUpdate,Resumegist,ResumeName
 
 router = APIRouter()
 
@@ -154,14 +154,18 @@ def update_resume(
     db.refresh(res)
     return res
 
-@router.get("/get-resume",reponsemodel=ResumeResponse,status_code=200)
+@router.get("/get-resume",response_model=ResumeName,status_code=200)
 def get_resume(db:Session = Depends(get_db),current_user:dict = Depends(get_current_user)):
 
-    student_resume = db.query(Resume).filter(Resume.sid == Student.sid).first()
+    student = db.query(Student).filter(
+        Student.email == current_user.get("sub")
+    ).first()
+    if not student:
+        raise HTTPException(status_code=404, detail="Student profile not found")
+
+    student_resume = db.query(Resume).filter(Resume.sid == student.sid).first()
     if not student_resume:
         raise HTTPException(status_code=404,detail="Resume not found")
 
-    fname = student_resume.file_name
-
-    return fname
+    return ResumeName(file_name=student_resume.file_name)
 
