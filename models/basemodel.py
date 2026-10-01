@@ -1,5 +1,5 @@
 from sqlalchemy.orm import declarative_base
-from sqlalchemy import Column, Integer, String, Float, DateTime, ForeignKey, Boolean, LargeBinary
+from sqlalchemy import Column, Integer, String, Float, DateTime, ForeignKey, Boolean, LargeBinary, text
 
 Base = declarative_base()
 
@@ -14,7 +14,7 @@ class Student(Base):
     year       = Column(Integer, nullable=False)
     cgpa       = Column(Float, nullable=False)
     domain     = Column(String(50), nullable=False)
-    created_at = Column(DateTime, nullable=False, server_default="now()")
+    created_at = Column(DateTime, nullable=False, server_default=text("now()"))
 
 
 class User(Base):
@@ -24,7 +24,7 @@ class User(Base):
     name = Column(String(50),nullable=False)
     email = Column(String(50),nullable=False,unique=True)
     password = Column(String(10000), nullable=True)
-    created_at = Column(DateTime, nullable=False, server_default="now()")
+    created_at = Column(DateTime, nullable=False, server_default=text("now()"))
 
 
 class Resume(Base):
@@ -44,7 +44,7 @@ class Admin(Base):
     name       = Column(String(50), nullable=False)
     email      = Column(String(50), unique=True, nullable=False)
     password   = Column(String(100), nullable=False)
-    created_at = Column(DateTime, nullable=False, server_default="now()")
+    created_at = Column(DateTime, nullable=False, server_default=text("now()"))
 
 
 class Project(Base):
