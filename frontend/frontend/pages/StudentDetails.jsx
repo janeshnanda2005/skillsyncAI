@@ -16,7 +16,7 @@ const emptyForm = {
 
 function StudentDetails() {
     const { user } = useAuth();
-    const [form, setForm] = useState(emptyForm);
+    const [form, setForm] = useState({ ...emptyForm, email: user?.email || '' });
     const navigate = useNavigate();
     const [saving, setSaving] = useState(false);
     const [error, setError] = useState('');
@@ -26,7 +26,7 @@ function StudentDetails() {
 
     const handleChange = (event) => {
         const { name, value } = event.target;
-        setForm((current) => ({ ...current, [name]: value }));
+        setForm((current) => ({ ...current, [name]: name === 'email' ? user?.email || '' : value }));
         setError('');
         setSuccess('');
     };
@@ -42,7 +42,7 @@ function StudentDetails() {
         const payload = {
             name: form.name.trim(),
             dept: form.dept.trim(),
-            email: form.email.trim(),
+            email: user?.email || form.email.trim(),
             year: Number(form.year),
             cgpa: Number(form.cgpa),
             domain: form.domain.trim(),
@@ -100,7 +100,7 @@ function StudentDetails() {
                 <div>
                     <div className="eyebrow">Student profile</div>
                     <h1>Build your student profile</h1>
-                    <p>Add the information used across your skills, projects, and resume profile.</p>
+                    <p>Add the information about you</p>
                 </div>
             </div>
 
@@ -116,7 +116,7 @@ function StudentDetails() {
 
                     <div className="field">
                         <label htmlFor="email">Email address</label>
-                        <input id="email" name="email" type="email" value={form.email} onChange={handleChange} required maxLength={50} />
+                        <input id="email" name="email" type="email" value={user?.email || form.email} readOnly required maxLength={50} />
                     </div>
 
                     <div className="dashboard-grid">

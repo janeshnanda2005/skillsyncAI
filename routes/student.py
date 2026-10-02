@@ -42,8 +42,11 @@ def add_student(
     db: Session = Depends(get_db),
     current_user: dict = Depends(get_current_user),
 ):
+    email = current_user.get("sub")
+    if not email:
+        raise HTTPException(status_code=401, detail="Invalid authenticated user")
 
-    existing = db.query(StudentModel).filter(StudentModel.email == student.email).first()
+    existing = db.query(StudentModel).filter(StudentModel.email == email).first()
     if existing:
         raise HTTPException(status_code=409, detail="A student with this email already exists")
 
@@ -51,7 +54,7 @@ def add_student(
         sid=student.sid,
         name=student.name,
         dept=student.dept,
-        email=student.email,
+        email=email,
         year=student.year,
         cgpa=student.cgpa,
         domain=student.domain,

@@ -2,13 +2,15 @@ import { useEffect, useState, useRef } from "react";
 import axios from 'axios';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Alert, Form, Button } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../components/useAuth';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
 
 function Resume(){
-    const{user} = useAuth();
+    const {user} = useAuth();
+    const navigate = useNavigate();
     const [file, setFile] = useState(null);
     const [status, setStatus] = useState('');
     const [error, setError] = useState('');
@@ -123,10 +125,10 @@ function Resume(){
                         <Button type="submit" disabled={Boolean(status)}>
                             Upload Resume
                         </Button>
-                        <div>
-                            <h1></h1>
-                        </div>
                     </Form>
+                    <Button className="mt-3" variant="outline-primary" onClick={() => navigate('/gist-model')}>
+                        Analyze Resume
+                    </Button>
                 </div>
 
             </div>

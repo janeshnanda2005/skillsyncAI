@@ -69,4 +69,4 @@ class certification(Base):
 
     cert_id = Column(Integer, primary_key=True, autoincrement=True)
     sid     = Column(Integer, ForeignKey("students.sid", ondelete="CASCADE"), nullable=False)
-    title   = Column(String(50), nullable=False)
+    title   = Column(String(2000), nullable=False)
