@@ -2,7 +2,6 @@ import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import { AuthProvider } from '../components/Authcontext'
 import { ThemeProvider } from '../components/ThemeContext'
 import { AppShell } from '../components/Navbar'
-import AnalyseResume from '../pages/AnalyseResume'
 import Login from '../pages/Login'
 import Skills from '../pages/Skills'
 import NotFound from '../pages/404'
@@ -28,7 +27,6 @@ function App() {
             <Route path="*" element={<NotFound/>}/>
             <Route path="/student-me" element={<Me/>}/>
             <Route path="/student-details" element={<StudentDetails/>}/>
-            <Route path="/gist-model" element={<AnalyseResume/>}/>
               <Route path="/home" element={<Home />} />
               <Route path="/add-project" element={<Project/>}/>
               <Route path="/upload-resume" element={<Resume />} />
@@ -42,4 +40,4 @@ function App() {
   )
 }
 
-export default App
+export default App;

@@ -63,7 +63,7 @@
 .collection-card h3 { font: 700 1rem var(--heading); margin: 0 0 16px; }
 .collection-count { color: var(--teal); font: 700 2rem var(--heading); }
 .item-list { list-style: none; padding: 0; margin: 14px 0 0; display: grid; gap: 9px; }
-.item-list li { border-top: 1px solid var(--line); padding-top: 9px; font-size: .9rem; }
+.item-list li { border-top: 1px solid var(--line); padding-top: 9px; color: var(--ink); font-size: .9rem; }
 .empty-state { color: var(--muted); font-size: .88rem; }
 .button { display: inline-flex; justify-content: center; align-items: center; border: 0; border-radius: 9px; padding: 12px 17px; font: 700 .9rem var(--sans); cursor: pointer; text-decoration: none; }
 .button-primary { color: white; background: var(--teal); }

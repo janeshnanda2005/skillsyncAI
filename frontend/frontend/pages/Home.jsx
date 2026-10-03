@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Alert, Button } from 'react-bootstrap';
+import { ThemeProvider } from '../components/ThemeContext'
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../components/useAuth';
 
@@ -9,7 +10,7 @@ const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 function Home() {
   const navigate = useNavigate();
   const {user,logout} = useAuth();
-  const [portfolio, setPortfolio] = useState({ skills: [], certifications: [], projects: [] });
+  const [portfolio, setPortfolio] = useState({ skills: [], certifications: [], projects: [], resume: null });
   const [error, setError] = useState('');
 
   useEffect(() => {
@@ -19,15 +20,17 @@ function Home() {
     const loadPortfolio = async () => {
       try {
         const config = { headers: { Authorization: `Bearer ${token}` } };
-        const [skills, certifications, projects] = await Promise.all([
+        const [skills, certifications, projects,resume] = await Promise.allSettled([
           axios.get(`${API_URL}/skills/my-skills`, config),
           axios.get(`${API_URL}/certifications/my-certifications`, config),
           axios.get(`${API_URL}/projects/my-projects`, config),
+          axios.get(`${API_URL}/resume/get-resume`, config)
         ]);
         setPortfolio({
-          skills: skills.data,
-          certifications: certifications.data,
-          projects: projects.data,
+          skills: skills.status === 'fulfilled' ? skills.value.data : [],
+          certifications: certifications.status === 'fulfilled'? certifications.value.data : [],
+          projects: projects.status === 'fulfilled' ? projects.value.data : [],
+          resume:resume.status === 'fulfilled' ? resume.value.data : null,
         });
         setError('');
       } catch (err) {
@@ -94,8 +97,18 @@ function Home() {
           <div className="card h-100 shadow-sm border-0">
             <div className="card-body">
               <h5 className="card-title">Resume</h5>
-              <p className="card-text text-muted">Upload your current Resume for prediction</p>
+              <p className="card-text text-muted">Upload your Resume to the Portal</p>
               <Button onClick={() => navigate('/upload-resume')}>Add Resume</Button>
+            </div>
+          </div>
+        </div>
+
+        <div className="col-md-4">
+          <div className="card h-100 shadow-sm border-0">
+            <div className="card-body">
+              <h5 className="card-title">AI Chat For Placement</h5>
+              <p className="card-text text-muted">AI based synopsis for Domain and Career Progression</p>
+              <Button onClick={() => navigate('/ai-chat')}>Click Here for AI Chat</Button>
             </div>
           </div>
         </div>
@@ -111,13 +124,14 @@ function Home() {
         </div>
       </div>
 
+      <ThemeProvider>
       <div className="row g-4 mt-1">
         <div className="col-md-4">
           <div className="card h-100 shadow-sm">
             <div className="card-body">
               <h5 className="card-title">Your Skills</h5>
               {portfolio.skills.length ? (
-                <ul className="mb-0">
+                <ul className="item-list mb-0">
                   {portfolio.skills.map((skill) => <li key={skill.skill_id}>{skill.title}</li>)}
                 </ul>
               ) : <p className="text-muted mb-0">No skills added yet.</p>}
@@ -130,7 +144,7 @@ function Home() {
             <div className="card-body">
               <h5 className="card-title">Your Certifications</h5>
               {portfolio.certifications.length ? (
-                <ul className="mb-0">
+                <ul className="item-list mb-0">
                   {portfolio.certifications.map((certification) => <li key={certification.cert_id}>{certification.title}</li>)}
                 </ul>
               ) : <p className="text-muted mb-0">No certifications added yet.</p>}
@@ -143,14 +157,30 @@ function Home() {
             <div className="card-body">
               <h5 className="card-title">Your Projects</h5>
               {portfolio.projects.length ? (
-                <ul className="mb-0">
+                <ul className="item-list mb-0">
                   {portfolio.projects.map((project) => <li key={project.pid}>{project.title}</li>)}
                 </ul>
               ) : <p className="text-muted mb-0">No projects added yet.</p>}
             </div>
           </div>
         </div>
+
+        <div className="col-md-4">
+          <div className="card h-100 shadow-sm">
+            <div className="card-body">
+              <h5 className="card-title">Resume</h5>
+              {portfolio.resume?.file_name ? (
+                <ul className="item-list mb-0">
+                  <li>{portfolio.resume.file_name}</li>
+                </ul>
+              ) : <p className="text-muted mb-0">No Resumes added yet</p>}
+            </div>
+          </div>
+        </div>
+
+
       </div>
+      </ThemeProvider>
     </div>
   );
 

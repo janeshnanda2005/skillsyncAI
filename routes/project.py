@@ -79,7 +79,7 @@ def update_project(
     current_user: dict = Depends(get_current_user),
 ):
     """Update a project. Only the owning student can update."""
-    student = _get_student_by_user(current_user, db)
+    student = get_student_by_user(current_user, db)
 
     project = db.query(ProjectModel).filter(
         ProjectModel.pid == project_id,
@@ -104,7 +104,7 @@ def delete_project(
     current_user: dict = Depends(get_current_user),
 ):
     """Delete a project. Only the owning student can delete."""
-    student = _get_student_by_user(current_user, db)
+    student = get_student_by_user(current_user, db)
 
     project = db.query(ProjectModel).filter(
         ProjectModel.pid == project_id,

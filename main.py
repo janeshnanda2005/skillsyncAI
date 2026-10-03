@@ -2,7 +2,7 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-
+from routes.BaseAI import router as AIrouter
 from routes.student import router as student_router
 from routes.auth import router as auth_router
 from routes.skills import router as skills_router
@@ -44,6 +44,7 @@ def root():
 
 
 app.include_router(auth_router,           prefix="/auth",           tags=["Auth"])
+app.include_router(AIrouter,              prefix="/ai",             tags=["AI"])
 app.include_router(student_router,        prefix="/students",       tags=["Students"])
 app.include_router(skills_router,         prefix="/skills",         tags=["Skills"])
 app.include_router(certifications_router, prefix="/certifications", tags=["Certifications"])

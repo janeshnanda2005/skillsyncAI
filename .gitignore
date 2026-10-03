@@ -12,6 +12,8 @@ env/
 ENV/
 alembic.ini
 
+/chromadb
+
 ai/chromadb
 ai/document.pdf
 
