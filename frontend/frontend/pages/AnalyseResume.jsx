@@ -63,7 +63,7 @@ function AnalyseResume(){
             Setloading(false);
         }
         
-    };
+    };    git rm -r --cached chromadb/
 
 
     return (

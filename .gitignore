@@ -12,7 +12,8 @@ env/
 ENV/
 alembic.ini
 
-/chromadb
+# Local ChromaDB vector-store data
+chromadb/
 
 ai/chromadb
 ai/document.pdf

@@ -4,6 +4,7 @@ import { ThemeProvider } from '../components/ThemeContext'
 import { AppShell } from '../components/Navbar'
 import Login from '../pages/Login'
 import Skills from '../pages/Skills'
+import AIChat from '../pages/AIChat'
 import NotFound from '../pages/404'
 import Cert from '../pages/Certification'
 import Me from  '../pages/me'
@@ -26,6 +27,7 @@ function App() {
             <Route element={<AppShell />}>
             <Route path="*" element={<NotFound/>}/>
             <Route path="/student-me" element={<Me/>}/>
+            <Route path="/ai-chat" element={<AIChat/>}/>
             <Route path="/student-details" element={<StudentDetails/>}/>
               <Route path="/home" element={<Home />} />
               <Route path="/add-project" element={<Project/>}/>

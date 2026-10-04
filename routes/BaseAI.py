@@ -7,7 +7,7 @@ from schemas.pydantic_models import Resumegist
 from models.basemodel import Resume,Student
 from ai.ai import model_initalization,system_prompt
 from ai.main_docloader import embedding_documents
-
+import re
 
 router = APIRouter()
 
@@ -37,7 +37,6 @@ def _clean_ai_content(content) -> str:
 @router.post("/ai-chat",status_code=200)
 async def resume_gist(
     payload:Resumegist,
-    resumeid: int | None = Query(default=None),
     db : Session = Depends(get_db),
     current_user = Depends(get_current_user)
 ):
@@ -49,8 +48,7 @@ async def resume_gist(
         raise HTTPException(status_code=404,detail="Student Profile is not found")
 
     resume_query = db.query(Resume).filter(
-    Resume.sid == student.sid,
-    Resume.r_id == resumeid).first()
+    Resume.sid == student.sid).first()
 
     if not resume_query:
         raise HTTPException(status_code=404,detail="File data is not present")
@@ -64,16 +62,18 @@ async def resume_gist(
         raise HTTPException(status_code=503,detail="LLM is not availale at the moment")
 
     documents = retriever.invoke(payload.msg)
+    print("Document ccount ",len(documents))
     context = "\n\n".join(doc.page_content for doc in documents)
     message = [
         SystemMessage(content=system_prompt),
         HumanMessage(
-            content={
+            content=(
                 f"Resume Context: \n{context}\n\n"
                 f"Question:{payload.msg}"
-            }
+            )
         )
     ]
     response = llm.invoke(message)
-    return _clean_ai_content(response.content)
+    cleaned = _clean_ai_content(response.content)
+    return cleaned
     

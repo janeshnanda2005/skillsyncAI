@@ -33,11 +33,11 @@ except ImportError:
 
 def model_initalization():
     api = os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")
-    openrouter_api_key = os.getenv("OPENROUTER_API_KEY")
+    openrouter_api_key = os.getenv("NVIDIA")
     prime_model = None
     if api:
         prime_model = ChatGoogleGenerativeAI(
-            model="gemini-3.6-flash",
+            model="gemini-2.5-flash",
             temperature=0.5,
             google_api_key=api,
         )
@@ -47,7 +47,7 @@ def model_initalization():
     fallback_model = None
     if openrouter_api_key and ChatOpenRouter is not None:
         fallback_model = ChatOpenRouter(
-            model="openai/gpt-4o-mini",
+            model="nvidia/nemotron-3.5-lightning:free",
             temperature=0.5,
             openrouter_api_key=openrouter_api_key,
         )
@@ -84,9 +84,11 @@ def retriever_tool(query:str) -> str:
     
     return "\n\n".join(results)
 
-# tools = [retriever_tool]
+tools = [retriever_tool]
 
-# llm = llm.bind_tools(tools=tools)
+base = model_initalization()
+
+llm = base.bind_tools(tools=tools)
 
 
 class AgentState(TypedDict):
@@ -117,11 +119,12 @@ You are an intelligent AI assistant who answers questions about Resume having im
 Use the retriever tool available to answer questions about the data which is present in the document. You can make multiple calls if needed.
 If you need to look up some information before asking a follow up question, you are allowed to do that!
 Please always cite the specific parts of the documents you use in your answers.
+Always format the resume data using strict Markdown. Use # for the candidate name, ### for section headers, --- for horizontal line dividers, and bold text for core technologies, company names, and metrics. Keep bullet points punchy and short.
 Also You need to generate your answers They may ask doubts regarding their resume tell what do improve based on Structure of Resume,Skills and suggest them 
-Frameworks for the development of the Resume and answer the student asking the questions in a structured manner.
+Frameworks for the development of the Resume and answer the student asking the questions in a structured manner, also keep the output short and crisp to the user, your limit is only 95 words.
 
 """
-# tool_dict = {tool_instance.name: tool_instance for tool_instance in tools}
+tool_dict = {tool_instance.name: tool_instance for tool_instance in tools}
 
 def call_llm(state):
     messages = list(state['messages'])
@@ -174,23 +177,21 @@ def take_action(state):
     return {"messages":result}
 
 
-# graph = StateGraph(AgentState)
-# graph.add_node('llm',call_llm)
-# graph.add_node("retriever_agent",take_action)
+graph = StateGraph(AgentState)
+graph.add_node('llm',call_llm)
+graph.add_node("retriever_agent",take_action)
 
-# graph.add_conditional_edges(
-#     'llm',
-#     should_continue,
-#     {True:"retriever_agent",False:END}
-# )
+graph.add_conditional_edges(
+    'llm',
+    should_continue,
+    {True:"retriever_agent",False:END}
+)
 
-# graph.add_edge("retriever_agent","llm")
-# graph.set_entry_point("llm")
+graph.add_edge("retriever_agent","llm")
+graph.set_entry_point("llm")
 
-# rag_agent = graph.compile()
+rag_agent = graph.compile()
 
-def draw_rag():
-    return rag_agent
 
 def cmd_rag():
     while True:
