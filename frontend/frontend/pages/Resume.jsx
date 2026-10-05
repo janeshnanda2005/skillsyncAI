@@ -16,9 +16,28 @@ function Resume(){
     const [error, setError] = useState('');
     const fileInput = useRef(null);  
     const [success, setSuccess] = useState('');
-    const [resumeName, setResumeName] = useState('');
+    const [resumeName, setResumeName] = useState(null);
 
+    const handleDelete = async () => {
+        if (!user?.access_token) {
+            setError("Please login to your account");
+            return;
+        }
 
+        try {
+            await axios.delete(`${API_URL}/resume/delete-resume`, {
+                headers: {
+                    Authorization: `Bearer ${user.access_token}`,
+                },
+            });
+            setResumeName(null);
+            setSuccess('Resume deleted successfully.');
+            setError('');
+        } catch (requestError) {
+            setError(requestError.response?.data?.detail || 'Unable to delete your resume.');
+            setSuccess('');
+        }
+    };
 
     const handlefilechange = (event) => {
         const selectedFile = event.target.files[0];
@@ -59,7 +78,7 @@ function Resume(){
                 formData,
                 {
                     headers:{
-                        Authorization:`Bearer ${token}`
+                        Authorization: `Bearer ${user.access_token}`,
                     }
                 }
             );
@@ -121,7 +140,14 @@ function Resume(){
                                 />
                                 {file && <Form.Text>{file.name}</Form.Text>}
                         </Form.Group>
-                        {resumeName && <p className="text-muted">Current resume: {resumeName}</p>}
+                        {resumeName && (
+                            <div className="d-flex align-items-center gap-2 mb-3">
+                                <p className="text-muted mb-0">Current resume: {resumeName}</p>
+                                <Button type="button" variant="outline-danger" onClick={handleDelete}>
+                                    Delete
+                                </Button>
+                            </div>
+                        )}
                         <Button type="submit" disabled={Boolean(status)}>
                             Upload Resume
                         </Button>

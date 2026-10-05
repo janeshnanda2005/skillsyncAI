@@ -58,6 +58,39 @@ def test_update_resume_returns_updated_fields(client, token_headers, db):
     assert response.json()["file_name"] == "updated.pdf"
 
 
+def test_delete_resume_removes_logged_in_students_resume(client, token_headers, db):
+    student = create_student(db, sid=306)
+    resume = Resume(
+        sid=student.sid,
+        public_id="resume-delete",
+        file_name="delete.pdf",
+        file_data=b"pdf bytes",
+    )
+    db.add(resume)
+    db.commit()
+
+    response = client.delete(
+        "/resume/delete-resume",
+        headers=token_headers,
+    )
+
+    assert response.status_code == 200
+    assert response.json() == {"message": "Resume deleted successfully"}
+    assert db.query(Resume).filter(Resume.r_id == resume.r_id).first() is None
+
+
+def test_delete_resume_returns_not_found_when_missing(client, token_headers, db):
+    create_student(db, sid=307)
+
+    response = client.delete(
+        "/resume/delete-resume",
+        headers=token_headers,
+    )
+
+    assert response.status_code == 404
+    assert response.json()["detail"] == "Resume not found"
+
+
 def test_gist_model_returns_ai_response(client, token_headers, db):
     student = create_student(db, sid=303)
     resume = Resume(
@@ -116,7 +149,11 @@ def test_gist_model_cleans_structured_ai_response(client, token_headers, db):
         )
 
     assert response.status_code == 200
-    assert response.json() == "Resume feedback Add measurable results. Remove outdated skills."
+    assert response.json() == (
+        "## Resume feedback\n"
+        "- Add measurable results.\n"
+        "- Remove outdated skills."
+    )
 
 
 def test_gist_model_rejects_empty_input(client, token_headers, db):

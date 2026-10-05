@@ -10,7 +10,6 @@ from langchain_chroma import Chroma
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
 from langchain.tools import tool
 
-GOOGLE_API_KEY = userdata.get('GEMINI_API_KEY')
 
 llm = ChatGoogleGenerativeAI(
     model="gemini-2.5-flash",
@@ -109,11 +108,6 @@ Please always cite the specific parts of the documents you use in your answers.
 
 tools_dict = {our_tool.name:our_tool for our_tool in tools}
 
-# def call_llm (state):
-#   messages = list(state['messages'])
-#   messages = [SystemMessage(content=system_prompt)] + messages
-#   message = llm.invoke(messages)
-#   return {"messages":[message]}
 
 def call_llm(state:AgentState) -> AgentState:
   messages = list(state['messages'])

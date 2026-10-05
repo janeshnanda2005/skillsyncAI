@@ -26,12 +26,10 @@ def _clean_ai_content(content) -> str:
     else:
         text = str(content)
 
-    text = re.sub(r"```(?:\w+)?", "", text)
-    text = re.sub(r"(^|\n)\s*#{1,6}\s*", r"\1", text)
-    text = re.sub(r"(^|\n)\s*[-*+]\s+", r"\1", text)
-    text = re.sub(r"\*{1,3}|_{1,3}", "", text)
-    text = re.sub(r"\s+", " ", text)
-    return text.strip()
+    text = re.sub(r"```(?:markdown|md)?\s*", "", text, flags=re.IGNORECASE)
+    text = text.replace("```", "")
+    lines = [re.sub(r"[ \t]+", " ", line).strip() for line in text.splitlines()]
+    return "\n".join(lines).strip()
 
 
 @router.post("/ai-chat",status_code=200)

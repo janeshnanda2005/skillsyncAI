@@ -17,7 +17,6 @@ def establish_connection():
         port=5432,  
         database="skillsyncai",
         user="postgres",
-        password=DB_PASSWORD
     )
 
     cursor = conn.cursor()

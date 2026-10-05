@@ -27,12 +27,10 @@ def _clean_ai_content(content) -> str:
     else:
         text = str(content)
 
-    text = re.sub(r"```(?:\w+)?", "", text)
-    text = re.sub(r"(^|\n)\s*#{1,6}\s*", r"\1", text)
-    text = re.sub(r"(^|\n)\s*[-*+]\s+", r"\1", text)
-    text = re.sub(r"\*{1,3}|_{1,3}", "", text)
-    text = re.sub(r"\s+", " ", text)
-    return text.strip()
+    text = re.sub(r"```(?:markdown|md)?\s*", "", text, flags=re.IGNORECASE)
+    text = text.replace("```", "")
+    lines = [re.sub(r"[ \t]+", " ", line).strip() for line in text.splitlines()]
+    return "\n".join(lines).strip()
 
 
 @router.post("/gist-model",status_code=200)
@@ -169,3 +167,22 @@ def get_resume(db:Session = Depends(get_db),current_user:dict = Depends(get_curr
 
     return ResumeName(file_name=student_resume.file_name)
 
+
+@router.delete("/delete-resume", status_code=200)
+def delete_resume(
+    db: Session = Depends(get_db),
+    current_user: dict = Depends(get_current_user),
+):
+    student = db.query(Student).filter(
+        Student.email == current_user.get("sub")
+    ).first()
+    if not student:
+        raise HTTPException(status_code=404, detail="Student profile not found")
+
+    resume = db.query(Resume).filter(Resume.sid == student.sid).first()
+    if not resume:
+        raise HTTPException(status_code=404, detail="Resume not found")
+
+    db.delete(resume)
+    db.commit()
+    return {"message": "Resume deleted successfully"}

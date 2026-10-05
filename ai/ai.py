@@ -13,6 +13,7 @@ from langchain.tools import tool
 from dotenv import load_dotenv
 import os
 from pathlib import Path
+import psycopg2
 
 load_dotenv(dotenv_path=Path(__file__).resolve().parent / ".env")
 
@@ -28,7 +29,6 @@ except ImportError:
         from docloader import retriever
     except ImportError:
         retriever = None
-
 
 
 def model_initalization():
@@ -119,9 +119,17 @@ You are an intelligent AI assistant who answers questions about Resume having im
 Use the retriever tool available to answer questions about the data which is present in the document. You can make multiple calls if needed.
 If you need to look up some information before asking a follow up question, you are allowed to do that!
 Please always cite the specific parts of the documents you use in your answers.
-Always format the resume data using strict Markdown. Use # for the candidate name, ### for section headers, --- for horizontal line dividers, and bold text for core technologies, company names, and metrics. Keep bullet points punchy and short.
-Also You need to generate your answers They may ask doubts regarding their resume tell what do improve based on Structure of Resume,Skills and suggest them 
-Frameworks for the development of the Resume and answer the student asking the questions in a structured manner, also keep the output short and crisp to the user, your limit is only 95 words.
+Always answer in clean, professional Markdown. Never return one long paragraph when the answer contains multiple points.
+Use this structure when it fits the question:
+### Summary
+One or two concise sentences.
+### Recommendations
+- A specific, actionable recommendation.
+- A second recommendation, if useful.
+### Next step
+One practical next action.
+Use bold text only for important technologies, companies, metrics, or actions. Keep headings and bullet points on separate lines. Do not use code fences, HTML, or a references section unless the user asks for it. Be accurate and clearly state when information is not present in the resume.
+Answer questions about resume structure, skills, projects, and improvements in a helpful, professional tone. Keep responses under 150 words.
 
 """
 tool_dict = {tool_instance.name: tool_instance for tool_instance in tools}

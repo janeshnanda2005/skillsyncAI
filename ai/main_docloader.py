@@ -4,6 +4,7 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
 import os
 import psycopg2
+import shutil
 import tempfile
 from dotenv import load_dotenv
 
@@ -13,7 +14,32 @@ api = os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")
 
 retriever = None
 
+
+def establish_resume():
+    database_url = os.getenv("DATABASE_URL")
+
+    replace = database_url.replace(
+        "postgresql+psycopg2://",
+        "postgresql://"
+    )
+
+    conn = psycopg2.connect(replace)
+
+    cursor = conn.cursor()
+
+    cursor.execute("""
+    SELECT resumes.sid FROM resumes LEFT JOIN students on students.sid = resumes.sid
+    """,)
+
+    result = cursor.fetchone()
+    sid = result[0]
+    return sid
+
+
 def embedding_documents(data):
+
+    sid = establish_resume()
+
     embedding = GoogleGenerativeAIEmbeddings(
             model="models/gemini-embedding-2",
             google_api_key=api
@@ -39,7 +65,8 @@ def embedding_documents(data):
     if not os.path.exists(persist_dir):
         os.makedirs(persist_dir)
     else:
-        print("The Vector Store Exists")
+        shutil.rmtree(persist_dir)
+        os.makedirs(persist_dir,exist_ok=True)
 
     vectordb = None
     try:
