@@ -16,7 +16,6 @@ function Login() {
     event.preventDefault();
     try {
       const data = await loginUser(email, password);
-      console.log(data);
       login(data);
       navigate('/home');
     } catch (error) {

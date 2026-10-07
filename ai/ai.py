@@ -33,7 +33,7 @@ except ImportError:
 
 def model_initalization():
     api = os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")
-    openrouter_api_key = os.getenv("NVIDIA")
+    openrouter_api_key = os.getenv("OPENROUTER_API_KEY") or os.getenv("NVIDIA")
     prime_model = None
     if api:
         prime_model = ChatGoogleGenerativeAI(
@@ -88,7 +88,7 @@ tools = [retriever_tool]
 
 base = model_initalization()
 
-llm = base.bind_tools(tools=tools)
+llm = base.bind_tools(tools=tools) if base is not None else None
 
 
 class AgentState(TypedDict):

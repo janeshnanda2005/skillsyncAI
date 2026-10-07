@@ -1,4 +1,6 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import Rating from '@mui/material/Rating'
+import Box from '@mui/material/Box'
 import axios from 'axios';
 import { Alert, Button } from 'react-bootstrap';
 import { ThemeProvider } from '../components/ThemeContext'
@@ -12,6 +14,20 @@ function Home() {
   const {user,logout} = useAuth();
   const [portfolio, setPortfolio] = useState({ skills: [], certifications: [], projects: [], resume: null });
   const [error, setError] = useState('');
+  const [ratings, setRatings] = useState({});
+
+  const labels = {
+    0.5:"needs Improvement",
+    1:"needs Imporvement",
+    1.5:"Poor",
+    2:"Poor+",
+    2.5:"ok",
+    3:"Average",
+    3.5:"Good",
+    4:"Good+",
+    4.5:"Excellent",
+    5:"Pro",
+  }
 
   useEffect(() => {
     const token = user?.access_token;
@@ -106,7 +122,7 @@ function Home() {
         <div className="col-md-4">
           <div className="card h-100 shadow-sm border-0">
             <div className="card-body">
-              <h5 className="card-title">AI Chat For Placement</h5>
+              <h5 className="card-title">AI Chat</h5>
               <p className="card-text text-muted">AI based synopsis for Domain and Career Progression</p>
               <Button onClick={() => navigate('/ai-chat')}>Click Here for AI Chat</Button>
             </div>
@@ -125,29 +141,105 @@ function Home() {
       </div>
 
       <ThemeProvider>
-      <div className="row g-4 mt-1">
-        <div className="col-md-4">
-          <div className="card h-100 shadow-sm">
-            <div className="card-body">
-              <h5 className="card-title">Your Skills</h5>
+        <div className="row g-4 mt-1">
+          <div className="col-md-4">
+            <div className="card h-100 shadow-sm">
+              <div className="card-body">
+                <h5 className="card-title">Your Skills</h5>
+
               {portfolio.skills.length ? (
-                <ul className="item-list mb-0">
-                  {portfolio.skills.map((skill) => <li key={skill.skill_id}>{skill.title}</li>)}
+                <ul className="list-unstyled">
+                  {portfolio.skills.map((skill) => (
+                    <li key={skill.skill_id} className="mb-2">
+                      <Box
+                        sx={{
+                          display: "flex",
+                          alignItems: "right",
+                        }}
+                      >
+                        {/* Skill name */}
+                        <Box sx={{ width: 120, color: "var(--ink)", fontWeight: 600 }}>
+                          {skill.title}
+                        </Box>
+
+                        {/* Rating */}
+                        <Rating
+                          name={`rating-${skill.skill_id}`}
+                          value={ratings[skill.skill_id] || 0}
+                          precision={0.5}
+                          sx={{
+                            color: "var(--amber)",
+                            "& .MuiRating-iconEmpty": {
+                              color: "var(--amber)",
+                              opacity: 0.45,
+                            },
+                          }}
+                          onChange={(event, newValue) => {
+                            setRatings((prev) => ({
+                              ...prev,
+                              [skill.skill_id]: newValue,
+                            }));
+                          }}
+                        />
+                      </Box>
+                    </li>
+                  ))}
                 </ul>
-              ) : <p className="text-muted mb-0">No skills added yet.</p>}
+              ) : (
+                <p className="text-muted mb-0">
+                  No skills added yet.
+                </p>
+              )}
             </div>
           </div>
         </div>
-
         <div className="col-md-4">
           <div className="card h-100 shadow-sm">
             <div className="card-body">
               <h5 className="card-title">Your Certifications</h5>
               {portfolio.certifications.length ? (
-                <ul className="item-list mb-0">
-                  {portfolio.certifications.map((certification) => <li key={certification.cert_id}>{certification.title}</li>)}
+                <ul className="list-unstyled">
+                  {portfolio.certifications.map((cert) => (
+                    <li key={cert.cert_id} className="mb-2">
+                      <Box
+                        sx={{
+                          display: "flex",
+                          alignItems: "right",
+                        }}
+                      >
+                        {/* Skill name */}
+                        <Box sx={{ width: 120, color: "var(--ink)", fontWeight: 600 }}>
+                          {cert.title}
+                        </Box>
+
+                        {/* Rating */}
+                        <Rating
+                          name={`rating-${cert_id}`}
+                          value={ratings[cert.cert_id] || 0}
+                          precision={0.5}
+                          sx={{
+                            color: "var(--amber)",
+                            "& .MuiRating-iconEmpty": {
+                              color: "var(--amber)",
+                              opacity: 0.45,
+                            },
+                          }}
+                          onChange={(event, newValue) => {
+                            setRatings((prev) => ({
+                              ...prev,
+                              [cert.cert_id]: newValue,
+                            }));
+                          }}
+                        />
+                      </Box>
+                    </li>
+                  ))}
                 </ul>
-              ) : <p className="text-muted mb-0">No certifications added yet.</p>}
+              ) : (
+                <p className="text-muted mb-0">
+                  No skills added yet.
+                </p>
+              )}
             </div>
           </div>
         </div>
@@ -157,10 +249,48 @@ function Home() {
             <div className="card-body">
               <h5 className="card-title">Your Projects</h5>
               {portfolio.projects.length ? (
-                <ul className="item-list mb-0">
-                  {portfolio.projects.map((project) => <li key={project.pid}>{project.title}</li>)}
+                <ul className="list-unstyled">
+                  {portfolio.projects.map((proj) => (
+                    <li key={proj.p_id} className="mb-2">
+                      <Box
+                        sx={{
+                          display: "flex",
+                          alignItems: "right",
+                        }}
+                      >
+                        {/* Skill name */}
+                        <Box sx={{ width: 120, color: "var(--ink)", fontWeight: 600 }}>
+                          {proj.title}
+                        </Box>
+
+                        {/* Rating */}
+                        <Rating
+                          name={`rating-${proj.p_id}`}
+                          value={ratings[proj.p_id] || 0}
+                          precision={0.5}
+                          sx={{
+                            color: "var(--amber)",
+                            "& .MuiRating-iconEmpty": {
+                              color: "var(--amber)",
+                              opacity: 0.45,
+                            },
+                          }}
+                          onChange={(event, newValue) => {
+                            setRatings((prev) => ({
+                              ...prev,
+                              [proj.proj_id]: newValue,
+                            }));
+                          }}
+                        />
+                      </Box>
+                    </li>
+                  ))}
                 </ul>
-              ) : <p className="text-muted mb-0">No projects added yet.</p>}
+              ) : (
+                <p className="text-muted mb-0">
+                  No skills added yet.
+                </p>
+              )}
             </div>
           </div>
         </div>
@@ -179,7 +309,7 @@ function Home() {
         </div>
 
 
-      </div>
+        </div>
       </ThemeProvider>
     </div>
   );

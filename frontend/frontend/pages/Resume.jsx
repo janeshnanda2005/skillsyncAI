@@ -152,7 +152,7 @@ function Resume(){
                             Upload Resume
                         </Button>
                     </Form>
-                    <Button className="mt-3" variant="outline-primary" onClick={() => navigate('/gist-model')}>
+                    <Button className="mt-3" variant="outline-primary" onClick={() => navigate('/ai-chat')}>
                         Analyze Resume
                     </Button>
                 </div>
