@@ -11,6 +11,8 @@ import Me from  '../pages/me'
 import Project from '../pages/Project'
 import Resume from '../pages/Resume'  
 import Signup from '../pages/Signup'
+import AdminSignup from '../pages/AdminSignup'
+import AdminLogin from '../pages/AdminLogin'
 import Home from '../pages/Home'
 import StudentDetails from '../pages/StudentDetails'
 import './App.css'
@@ -26,6 +28,8 @@ function App() {
             <Route path="/signup" element={<Signup />} />
             <Route element={<AppShell />}>
             <Route path="*" element={<NotFound/>}/>
+            <Route path="/admin-signup" element={<AdminSignup/>}/>
+            <Route path="/admin-login" element={<AdminLogin/>}/>
             <Route path="/student-me" element={<Me/>}/>
             <Route path="/ai-chat" element={<AIChat/>}/>
             <Route path="/student-details" element={<StudentDetails/>}/>

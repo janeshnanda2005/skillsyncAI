@@ -9,7 +9,7 @@ from routes.skills import router as skills_router
 from routes.certifications import router as certifications_router
 from routes.project import router as project_router
 from routes.resume import router as resume_router
-from routes.admin import router as admin_router
+from routes.Admin import router as admin_router
 
 from models.basemodel import Base
 from database.database import engine

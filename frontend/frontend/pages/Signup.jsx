@@ -42,6 +42,7 @@ function Signup() {
             </Form.Group>
           ))}
           <Button variant="primary" type="submit" className="w-100">Sign Up</Button>
+          <Button variant="primary" type="submit" className="w-100"><Link to ="/admin-signup">Admin Login</Link></Button>
         </Form>
         <p className="mt-3 text-center mb-0">
           Already have an account? <Link to="/login">Sign in</Link>

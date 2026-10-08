@@ -38,6 +38,7 @@ function Login() {
             <Form.Control type="password" value={password} onChange={(event) => setPassword(event.target.value)} required />
           </Form.Group>
           <Button variant="primary" type="submit" className="w-100">Login</Button>
+          <Button variant="primary" type="button" className="w-100"><Link to="/admin-login">Admin Login</Link></Button>
         </Form>
 
         <p className="mt-3 text-center mb-0">
