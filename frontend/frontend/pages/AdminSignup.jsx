@@ -5,7 +5,7 @@ import { Form, Button } from 'react-bootstrap'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../components/useAuth'
 
-const API_URL = 'http://localhost:8000'
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
 
 function AdminSignup() {
   const { signup } = useAuth()
@@ -16,7 +16,7 @@ function AdminSignup() {
   const handleSubmit = async (event) => {
     event.preventDefault()
     try {
-      await axios.post(`${API_URL}/admin/admin-register`, form)
+      await axios.post(`${API_URL}/admin/register`, form)
       signup({ name: form.name, email: form.email, password:form.password ,correct_password:form.correct_password})
       navigate('/admin-login')
     } catch (requestError) {

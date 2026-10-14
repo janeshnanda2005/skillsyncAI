@@ -10,7 +10,7 @@ from models.basemodel import Admin
 router = APIRouter()
 
 
-@router.post("/admin-register", response_model=AdminResponse, status_code=201)
+@router.post("/register", response_model=AdminResponse, status_code=201)
 def register_admin(payload: AdminCreate, db: Session = Depends(get_db)):
     """Register a new admin account."""
     if payload.password != payload.correct_password:
@@ -32,7 +32,7 @@ def register_admin(payload: AdminCreate, db: Session = Depends(get_db)):
     return admin
 
 
-@router.post("/admin-login")
+@router.post("/login")
 def login_admin(payload: AdminLogin, db: Session = Depends(get_db)):
     admin = db.query(Admin).filter(Admin.email == payload.email).first()
     if not admin or not verify_password(payload.password, admin.password):

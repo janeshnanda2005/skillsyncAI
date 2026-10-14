@@ -1,4 +1,5 @@
 from contextlib import asynccontextmanager
+import os
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -9,7 +10,7 @@ from routes.skills import router as skills_router
 from routes.certifications import router as certifications_router
 from routes.project import router as project_router
 from routes.resume import router as resume_router
-from routes.Admin import router as admin_router
+from routes.admin import router as admin_router
 
 from models.basemodel import Base
 from database.database import engine
@@ -29,9 +30,15 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
+cors_origins = [
+    origin.strip()
+    for origin in os.getenv("CORS_ORIGINS", "http://localhost:5173").split(",")
+    if origin.strip()
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],
+    allow_origins=cors_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
