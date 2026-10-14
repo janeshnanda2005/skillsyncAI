@@ -12,7 +12,7 @@ function AIChat(){
     const [loading,Setloading] = useState(false);
     const messagesEndRef = useRef(null);
 
-    const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000"
+    const API_URL = import.meta.env.VITE_API_URL || "https://skillsyncai-d5pk.onrender.com"
 
     const ScrollBottom = () => {
         messagesEndRef.current?.scrollIntoView({behavior:'smooth'});

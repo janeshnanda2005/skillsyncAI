@@ -5,7 +5,7 @@ import { Form, Button } from 'react-bootstrap'
 import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../components/useAuth'
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
+const API_URL = import.meta.env.VITE_API_URL || 'https://skillsyncai-d5pk.onrender.com'
 
 function AdminSignup() {
   const { signup } = useAuth()
