@@ -33,7 +33,7 @@ def register_admin(payload: AdminCreate, db: Session = Depends(get_db)):
 
 
 @router.post("/login",status_code=401)
-def login_admin(db:Depends(get_db),payload:AdminLogin):
+def login_admin(payload: AdminLogin, db: Session = Depends(get_db)):
     if not payload:
         raise HTTPException(detail="The Payload is Empty",status_code=400)
     admin = db.query(Admin).filter(Admin.email == payload.email).first()

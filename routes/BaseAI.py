@@ -35,8 +35,8 @@ def _clean_ai_content(content) -> str:
 @router.post("/ai-chat",status_code=200)
 async def resume_gist(
     payload:Resumegist,
-    db:Depends(get_db),
-    current_user:get_current_user(get_current_user),
+    db: Session = Depends(get_db),
+    current_user: dict = Depends(get_current_user),
 ):
 
     if not payload:
