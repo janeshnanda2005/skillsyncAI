@@ -7,10 +7,18 @@ import { useAuth } from '../components/useAuth'
 
 const API_URL = import.meta.env.VITE_API_URL || 'https://skillsyncai-d5pk.onrender.com'
 
+const formdetails = {
+  name:'',
+  email:'',
+  password:'',
+  correct_password:''
+}
+
+
 function AdminSignup() {
   const { signup } = useAuth()
   const navigate = useNavigate()
-  const [form, setForm] = useState({ name: '', email: '', password: '', correct_password: '' })
+  const [form, setForm] = useState({...formdetails})
   const [error, setError] = useState('')
 
   const handleSubmit = async (event) => {
