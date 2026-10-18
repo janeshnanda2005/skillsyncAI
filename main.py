@@ -35,6 +35,7 @@ cors_origins = [
     for origin in os.getenv(
         "CORS_ORIGINS",
         "http://localhost:5173,https://skillsyncai-1-dx50.onrender.com",
+        "http://localhost:5173/"
     ).split(",")
     if origin.strip()
 ]

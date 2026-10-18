@@ -35,43 +35,43 @@ def _clean_ai_content(content) -> str:
 @router.post("/ai-chat",status_code=200)
 async def resume_gist(
     payload:Resumegist,
-    db : Session = Depends(get_db),
-    current_user = Depends(get_current_user)
+    db:Depends(get_db),
+    current_user:get_current_user(get_current_user),
 ):
-    if not payload.msg.strip():
-        raise HTTPException(status_code=404,detail="The Payload is Empty")
 
+    if not payload:
+        raise HTTPException(detail="Data is not found",status_code=401)
+    
     student = db.query(Student).filter(Student.email == current_user.get("sub")).first()
-    if not student:
-        raise HTTPException(status_code=404,detail="Student Profile is not found")
 
-    resume_query = db.query(Resume).filter(
-    Resume.sid == student.sid).first()
+    if not student:
+        raise HTTPException(detail="The student data is not present",status_code=401)
+    
+    resume_query = db.query(Resume).filter(Resume.sid == Student.sid).first()
 
     if not resume_query:
-        raise HTTPException(status_code=404,detail="File data is not present")
-
+        raise HTTPException(detail="Resume if not present",status_code=401)
+    
     retriever = embedding_documents(resume_query.file_data)
-    if retriever is None:
-        raise HTTPException(status_code=503,detail="Resume retriever is unavailable")
-
+    if not retriever:
+        raise HTTPException(detail="The retriver is not",status_code=400)
+    
     llm = model_initalization()
-    if llm is None:
-        raise HTTPException(status_code=503,detail="LLM is not availale at the moment")
-
+    if not llm:
+        raise HTTPException(detail="The LLM is not present",status_code=400)
+    
     documents = retriever.invoke(payload.msg)
-    print("Document ccount ",len(documents))
     context = "\n\n".join(doc.page_content for doc in documents)
     message = [
         SystemMessage(content=system_prompt),
         HumanMessage(
             content=(
-                f"Resume Context: \n{context}\n\n"
+                f"Resume Context: \n{Context}\n\n"
                 f"Question:{payload.msg}"
             )
         )
     ]
+
     response = llm.invoke(message)
     cleaned = _clean_ai_content(response.content)
     return cleaned
-    

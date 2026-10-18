@@ -32,10 +32,12 @@ def register_admin(payload: AdminCreate, db: Session = Depends(get_db)):
     return admin
 
 
-@router.post("/login")
-def login_admin(payload: AdminLogin, db: Session = Depends(get_db)):
+@router.post("/login",status_code=401)
+def login_admin(db:Depends(get_db),payload:AdminLogin):
+    if not payload:
+        raise HTTPException(detail="The Payload is Empty",status_code=400)
     admin = db.query(Admin).filter(Admin.email == payload.email).first()
-    if not admin or not verify_password(payload.password, admin.password):
-        raise HTTPException(status_code=401, detail="invalid email or password")
-    token = create_access_token(data={"sub": admin.email, "role": "admin"})
-    return {"access_token": token, "token_type": "bearer"}
+    if not admin:
+        raise HTTPException(detail="There is no admin payload",status_code=400)
+    token = create_access_token(payload.password,admin.password)
+    return {"access_token":token,"token_type": "bearer"}
