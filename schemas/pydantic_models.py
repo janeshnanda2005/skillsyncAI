@@ -1,5 +1,5 @@
 from pydantic import BaseModel, ConfigDict, EmailStr
-from typing import Optional
+from typing import Optional,List
 from datetime import datetime
 
 
@@ -130,7 +130,22 @@ class ResumeUpdate(BaseModel):
 
 class ResumeName(BaseModel):
     file_name:str
-    
+
+
+
+class QuestionCreate(BaseModel):
+    question_text:str
+    question_options: List[str]
+    correct_option_index:int
+
+class Assesment_create(BaseModel):
+    title:str
+    description:Optional[str] = None
+    question:List[QuestionCreate]
+
+class Assesment_Submisson(BaseModel):
+    assesment_id:int
+    select_answers:List[int]    
 
 # ─── Admin ───────────────────────────────────────────────────────────────────
 

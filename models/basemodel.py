@@ -1,5 +1,6 @@
 from sqlalchemy.orm import declarative_base
 from sqlalchemy import Column, Integer, String, Float, DateTime, ForeignKey, Boolean, LargeBinary, text
+from sqlalchemy.dialects.postgresql import JSONB 
 
 Base = declarative_base()
 
@@ -70,3 +71,27 @@ class certification(Base):
     cert_id = Column(Integer, primary_key=True, autoincrement=True)
     sid     = Column(Integer, ForeignKey("students.sid", ondelete="CASCADE"), nullable=False)
     title   = Column(String(2000), nullable=False)
+
+
+class Assesment(Base):
+    __tablename__ = "assesment"
+
+    assesment_id = Column(Integer,primary_key=True,autoincrement=True)
+    title = Column(String(255),nullable=False)
+    description = Column(String(2000),nullable=True)
+
+
+class Question(Base):
+    __tablename__ = "questions"
+
+    question_id = Column(Integer,nullable=False,autoincrement=True,primary_key=True)
+    assesment_id = Column(
+        Integer,
+        ForeignKey("assesment.assesment_id",ondelete="CASCADE"),
+        nullable=False
+    )
+
+    question_text = Column(String(2000),nullable=False)
+    options = Column(JSONB,nullable=False)
+    correct_option_index = Column(Integer,nullable=False)
+

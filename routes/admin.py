@@ -10,27 +10,29 @@ from models.basemodel import Admin
 router = APIRouter()
 
 
-@router.post("/register", response_model=AdminResponse, status_code=201)
-def register_admin(payload: AdminCreate, db: Session = Depends(get_db)):
-    """Register a new admin account."""
-    if payload.password != payload.correct_password:
-        raise HTTPException(status_code=400, detail="Passwords do not match")
-
+@router.post("/register",response_model=AdminResponse,status_code=200)
+def register_admin(payload:AdminCreate,db :Session = Depends(get_db)):
+    if not payload:
+        raise HTTPException(status_code=404,detail="The payload is empty")
+    
     existing = db.query(Admin).filter(Admin.email == payload.email).first()
     if existing:
-        raise HTTPException(status_code=409, detail="Admin with this email already exists")
-
+        raise HTTPException(detail="The User is already present",status_code=404)
+    
     admin = Admin(
         name=payload.name,
-        email=payload.email,
-        password=hash_password(payload.password),
-        created_at=datetime.now(timezone.utc),
+        email = payload.email,
+        password = payload.password,
+        correct_password = payload.correct_password
     )
+
     db.add(admin)
     db.commit()
     db.refresh(admin)
-    return admin
+    db.close()
 
+    token = create_access_token(payload.password,admin.password)
+    return {"access_token":token,"token_type":"bearer"}
 
 @router.post("/login",status_code=401)
 def login_admin(payload: AdminLogin, db: Session = Depends(get_db)):

@@ -26,7 +26,7 @@ function AdminSignup() {
     try {
       await axios.post(`${API_URL}/admin/register`, form)
       signup({ name: form.name, email: form.email, password:form.password ,correct_password:form.correct_password})
-      navigate('/admin-login')
+      navigate('/home')
     } catch (requestError) {
       setError(requestError.response?.data?.detail || 'Signup failed')
     }

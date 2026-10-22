@@ -6,6 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from routes.BaseAI import router as AIrouter
 from routes.student import router as student_router
 from routes.auth import router as auth_router
+from routes.assesments import router as assesment_router
 from routes.skills import router as skills_router
 from routes.certifications import router as certifications_router
 from routes.project import router as project_router
@@ -31,12 +32,8 @@ app = FastAPI(
 )
 
 cors_origins = [
-    origin.strip()
-    for origin in os.getenv(
-        "CORS_ORIGINS",
-        "http://localhost:5173,https://skillsyncai-1-dx50.onrender.com",
-    ).split(",")
-    if origin.strip()
+    "http://localhost:5173",
+    "https://skillsyncai-1-dx50.onrender.com"
 ]
 
 app.add_middleware(
@@ -60,6 +57,7 @@ app.include_router(skills_router,         prefix="/skills",         tags=["Skill
 app.include_router(certifications_router, prefix="/certifications", tags=["Certifications"])
 app.include_router(project_router,        prefix="/projects",       tags=["Projects & Resumes"])
 app.include_router(resume_router,         prefix="/resume",         tags=["Resumes"])
+app.include_router(assesment_router,      prefix="/assesment",      tags=["assesment"])
 app.include_router(admin_router,          prefix="/admin",          tags=["Admin"])
 
 if __name__ == "__main__":
