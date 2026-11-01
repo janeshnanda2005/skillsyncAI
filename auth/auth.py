@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta, timezone
+from pathlib import Path
 from jose import JWTError, jwt
 from fastapi import HTTPException, Header, Query
 from dotenv import load_dotenv
@@ -7,7 +8,7 @@ import bcrypt
 from passlib.hash import pbkdf2_sha256
 
 
-load_dotenv()
+load_dotenv(dotenv_path=Path(__file__).resolve().with_name(".env"))
 
 SECRET_KEY = os.getenv("SECRET_KEY")
 ALGORITHM = os.getenv("ALGORITHM")

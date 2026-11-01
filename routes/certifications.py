@@ -11,7 +11,7 @@ router = APIRouter()
 
 
 
-def _get_student_by_user(current_user: dict, db: Session) -> StudentModel:
+def _get_student_by_user(current_user: dict, db: Session,reponse_model=StudentModel):
     email = current_user.get("sub")
     student = db.query(StudentModel).filter(StudentModel.email == email).first()
     if not student:
@@ -42,16 +42,16 @@ def add_certification(
     db.commit()
     db.refresh(cert)
     return cert
-
-
+  
 
 @router.get("/my-certifications",response_model=list[CertificationResponse])
-def get_my_certificate(db:Session = Depends(get_db),current_user:dict = Depends(get_current_user)):
+def all_certifications(db:Session = Depends(get_db),current_user:dict = Depends(get_current_user)):
     email = current_user.get("sub")
-    student = db.query(StudentModel).filter(StudentModel.email == email).first()
+    student = db.query(StudentModel).filter(StudentModel.sid == email.sid).first()
     if not student:
         return []
-    return db.query(CertModel).filter(CertModel.sid == student.sid).all()                    
+    return db.query(CertModel).filter(CertModel.sid == student.sid).all()
+
 
 @router.get("/student/{student_id}", response_model=list[CertificationResponse])
 def get_certifications_by_student(
@@ -64,6 +64,7 @@ def get_certifications_by_student(
     if not student:
         raise HTTPException(status_code=404, detail="Student not found")
     return db.query(CertModel).filter(CertModel.sid == student_id).all()
+
 
 
 @router.delete("/delete-certification/{cert_id}", status_code=200)

@@ -1,6 +1,6 @@
 from contextlib import asynccontextmanager
 import os
-
+from logger import logger
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from routes.BaseAI import router as AIrouter
@@ -47,6 +47,7 @@ app.add_middleware(
 
 @app.get("/", tags=["health"])
 def root():
+    logger.info("Home endpoint accessed")
     return {"message": "Welcome to SkillSyncAI API 🚀", "docs": "/docs"}
 
 
