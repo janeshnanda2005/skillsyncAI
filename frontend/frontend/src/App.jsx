@@ -1,22 +1,19 @@
-import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
-import { AuthProvider } from '../components/Authcontext'
-import { ThemeProvider } from '../components/ThemeContext'
-import { AppShell } from '../components/Navbar'
-import Login from '../pages/Login'
-import Skills from '../pages/Skills'
-import AIChat from '../pages/AIChat'
-import NotFound from '../pages/404'
-import Cert from '../pages/Certification'
-import AdminPage from "../pages/Adminpage"
-import Me from  '../pages/me'
-import Project from '../pages/Project'
-import Resume from '../pages/Resume'  
-import Signup from '../pages/Signup'
-import AdminSignup from '../pages/AdminSignup'
-import AdminLogin from '../pages/AdminLogin'
-import Home from '../pages/Home'
-import StudentDetails from '../pages/StudentDetails'
-import './App.css'
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import { ThemeProvider } from "../context/ThemeContext";
+import { AuthProvider } from "../context/AuthContext";
+import { AppShell } from "../components/layout/AppShell";
+import Login from "../pages/Login";
+import Signup from "../pages/Signup";
+import Dashboard from "../pages/Dashboard";
+import Profile from "../pages/Profile";
+import Opportunities from "../pages/Opportunities";
+import Resume from "../pages/Resume";
+import Assessment from "../pages/Assessment";
+import Analytics from "../pages/Analytics";
+import Settings from "../pages/Settings";
+import Help from "../pages/Help";
+import Landing from "../pages/Landing";
+import "./App.css";
 
 function App() {
   return (
@@ -24,28 +21,36 @@ function App() {
       <AuthProvider>
         <BrowserRouter>
           <Routes>
-            <Route path="/" element={<Navigate to="/login" replace />} />
+            <Route path="/" element={<Landing />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
             <Route element={<AppShell />}>
-            <Route path="*" element={<NotFound/>}/>
-            <Route path="/admin-signup" element={<AdminSignup/>}/>
-            <Route path="/admin-login" element={<AdminLogin/>}/>
-            <Route path="/student-me" element={<Me/>}/>
-            <Route path="/ai-chat" element={<AIChat/>}/>
-            <Route path="/admin-page" element = {<AdminPage/>}></Route>
-            <Route path="/student-details" element={<StudentDetails/>}/>
-              <Route path="/home" element={<Home />} />
-              <Route path="/add-project" element={<Project/>}/>
-              <Route path="/upload-resume" element={<Resume />} />
-              <Route path="/add-cert" element={<Cert/>}/>
-              <Route path="/add-skill" element={<Skills />} />
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/profile" element={<Profile />} />
+              <Route path="/opportunities" element={<Opportunities />} />
+              <Route path="/resume" element={<Resume />} />
+              <Route path="/assessment" element={<Assessment />} />
+              <Route path="/analytics" element={<Analytics />} />
+              <Route path="/settings" element={<Settings />} />
+              <Route path="/help" element={<Help />} />
             </Route>
+            <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
       </AuthProvider>
     </ThemeProvider>
-  )
+  );
+}
+
+function NotFound() {
+  return (
+    <div className="flex min-h-[60vh] items-center justify-center p-6">
+      <div className="text-center">
+        <h1 className="text-4xl font-bold">404</h1>
+        <p className="mt-2 text-muted-foreground">Page not found</p>
+      </div>
+    </div>
+  );
 }
 
 export default App;

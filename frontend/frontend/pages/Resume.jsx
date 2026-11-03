@@ -1,164 +1,30 @@
-import { useEffect, useState, useRef } from "react";
-import axios from 'axios';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import { Alert, Form, Button } from 'react-bootstrap';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../components/useAuth';
+import React from "react";
+import { Card, CardHeader, CardTitle, CardContent } from "../components/ui/Card";
+import { Button } from "../components/ui/Button";
+import { Badge } from "../components/ui/Badge";
+import { Skeleton } from "../components/ui/Skeleton";
+import { Upload, FileText } from "lucide-react";
 
-const API_URL = import.meta.env.VITE_API_URL || 'https://skillsyncai-d5pk.onrender.com';
+const sampleResume = {
+  fileName: "Jane_Doe_Resume.pdf",
+  uploadedAt: "Oct 12, 2024",
+  aiScore: 87,
+  aiSuggestions: [
+    "Add more quantifiable metrics to your work experience (e.g., 'increased performance by 20%').",
+    "Include a link to your portfolio or GitHub profile.",
+    "Add relevant certifications section with dates.",
+    "Use strong action verbs at the start of each bullet point.",
+  ],
+};
 
-
-function Resume(){
-    const {user} = useAuth();
-    const navigate = useNavigate();
-    const [file, setFile] = useState(null);
-    const [status, setStatus] = useState('');
-    const [error, setError] = useState('');
-    const fileInput = useRef(null);  
-    const [success, setSuccess] = useState('');
-    const [resumeName, setResumeName] = useState(null);
-
-    const handleDelete = async () => {
-        if (!user?.access_token) {
-            setError("Please login to your account");
-            return;
-        }
-
-        try {
-            await axios.delete(`${API_URL}/resume/delete-resume`, {
-                headers: {
-                    Authorization: `Bearer ${user.access_token}`,
-                },
-            });
-            setResumeName(null);
-            setSuccess('Resume deleted successfully.');
-            setError('');
-        } catch (requestError) {
-            setError(requestError.response?.data?.detail || 'Unable to delete your resume.');
-            setSuccess('');
-        }
-    };
-
-    const handlefilechange = (event) => {
-        const selectedFile = event.target.files[0];
-        setFile(selectedFile || null);
-        setError('');
-        setSuccess('');
-    };
-
-    const handleFormSubmit = async (event) => {
-        event.preventDefault();
-
-        const token = user?.access_token;
-        if(!token){
-            setError("Please login to your account");
-            return;
-        }
-
-        if(!file){
-            setError('Please select a PDF file first');
-            return;
-        }
-
-        if (file.type !== 'application/pdf' && !file.name.toLowerCase().endsWith('.pdf')) {
-            setError('Only PDF files are allowed');
-            return;
-        }
-
-        const formData = new FormData();
-        formData.append('file',file);
-
-        setStatus("Uploading...");
-        setError('');
-        setSuccess('');
-
-        try {
-            await axios.post(
-                `${API_URL}/resume/upload-resume`,
-                formData,
-                {
-                    headers:{
-                        Authorization: `Bearer ${user.access_token}`,
-                    }
-                }
-            );
-
-            setStatus('');
-            setSuccess("The file was added successfully");
-            setFile(null);
-            event.target.reset();
-
-        }
-        catch (error) {
-            const detail = error.response?.data?.detail || 'Unable to upload the resume right now';
-            setError(detail);
-            setSuccess('');
-            setStatus('');
-        }
-    };
-
-    useEffect(() => {
-        const getResumeName = async () => {
-            if (!user?.access_token) return;
-
-            try {
-                const response = await axios.get(`${API_URL}/resume/get-resume`, {
-                    headers: {
-                        Authorization: `Bearer ${user.access_token}`,
-                    },
-                });
-                setResumeName(response.data.file_name);
-            } catch (requestError) {
-                if (requestError.response?.status !== 404) {
-                    setError(requestError.response?.data?.detail || 'Unable to load your resume.');
-                }
-            }
-        };
-
-        getResumeName();
-    }, [user?.access_token]);
-
-    return (
-            <div className="container py-5">
-                <div className="mx-auto" style={{maxWidth:'500px'}}>
-                    <h2 className="mb-4">Add a Resume</h2>
-
-                    {error && <Alert variant="danger">{error}</Alert>}
-                    {success && <Alert variant="success">{success}</Alert>}
-                    {status && <Alert variant="info">{status}</Alert>}
-
-                    <Form onSubmit={handleFormSubmit}>
-                        <Form.Group className="mb-3" controlId="resumeFile">
-                                <Form.Label>Resume PDF</Form.Label>
-                                <Form.Control
-                                    type="file"
-                                    name="file"
-                                    accept="application/pdf,.pdf"
-                                    ref={fileInput}
-                                    onChange={handlefilechange}
-                                    required
-                                />
-                                {file && <Form.Text>{file.name}</Form.Text>}
-                        </Form.Group>
-                        {resumeName && (
-                            <div className="d-flex align-items-center gap-2 mb-3">
-                                <p className="text-muted mb-0">Current resume: {resumeName}</p>
-                                <Button type="button" variant="outline-danger" onClick={handleDelete}>
-                                    Delete
-                                </Button>
-                            </div>
-                        )}
-                        <Button type="submit" disabled={Boolean(status)}>
-                            Upload Resume
-                        </Button>
-                    </Form>
-                    <Button className="mt-3" variant="outline-primary" onClick={() => navigate('/ai-chat')}>
-                        Analyze Resume
-                    </Button>
-                </div>
-
-            </div>
-        );
+export default function Resume() {
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between"><div><h1 className="text-2xl font-bold tracking-tight">Resume Workspace</h1><p className="text-sm text-muted-foreground mt-1">Build and improve your resume with AI-powered suggestions.</p></div><Button variant="outline" className="gap-2"><Upload className="h-4 w-4" /> Upload Resume</Button></div>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <Card className="lg:col-span-1"><CardHeader><CardTitle className="flex items-center gap-2"><FileText className="h-4 w-4" /> Resume File</CardTitle></CardHeader><CardContent className="p-4"><div className="space-y-3"><div className="flex items-center gap-3"><Upload className="h-5 w-5 text-primary" /><div className="flex-1"><p className="font-medium">{sampleResume.fileName}</p><p className="text-xs text-muted-foreground">{sampleResume.uploadedAt}</p></div></div><div className="space-y-1 mt-3"><span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">AI Score</span><div className="flex items-center gap-2"><span className="text-2xl font-bold">{sampleResume.aiScore}/100</span><Badge variant="success">Strong</Badge></div></div></div></CardContent></Card>
+        <Card className="lg:col-span-2"><CardHeader><CardTitle className="flex items-center gap-2"><FileText className="h-4 w-4" /> AI Suggestions</CardTitle></CardHeader><CardContent className="space-y-3">{sampleResume.aiSuggestions.map((s, i) => <div key={i} className="flex items-start gap-3 p-3 rounded-md bg-muted/30"><span className="mt-1 shrink-0 text-xs bg-primary/10 px-2 py-1 rounded text-primary">{i + 1}</span><p className="text-sm">{s}</p></div>)}</CardContent></Card>
+      </div>
+    </div>
+  );
 }
-
-export default Resume;

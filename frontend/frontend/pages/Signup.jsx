@@ -1,55 +1,110 @@
-import { useState } from 'react'
-import axios from 'axios'
-import 'bootstrap/dist/css/bootstrap.min.css'
-import { Form, Button } from 'react-bootstrap'
-import { Link, useNavigate } from 'react-router-dom'
-import { useAuth } from '../components/useAuth'
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "./../context/AuthContext";
+import { Button } from "./../components/ui/Button";
+import { Input } from "./../components/ui/Input";
+import { Zap } from "lucide-react";
 
-const API_URL = import.meta.env.VITE_API_URL || 'https://skillsyncai-d5pk.onrender.com'
+export default function Signup() {
+  const { signup } = useAuth();
+  const navigate = useNavigate();
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
-function Signup() {
-  const { signup } = useAuth()
-  const navigate = useNavigate()
-  const [form, setForm] = useState({ name: '', email: '', password: '', correct_password: '' })
-  const [error, setError] = useState('')
-
-  const handleSubmit = async (event) => {
-    event.preventDefault()
-    try {
-      const response = await axios.post(`${API_URL}/auth/register`, form)
-      signup({ name: form.name, email: form.email, password:form.password ,correct_password:form.correct_password})
-      navigate('/home')
-    } catch (requestError) {
-      setError(requestError.response?.data?.detail || 'Signup failed')
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError("");
+    if (password !== confirmPassword) {
+      setError("Passwords do not match");
+      return;
     }
-  }
+    if (password.length < 8) {
+      setError("Password must be at least 8 characters");
+      return;
+    }
+    setLoading(true);
+    try {
+      const userData = { name, email, access_token: "mock-token-" + Date.now() };
+      signup(userData);
+      navigate("/dashboard");
+    } catch (err) {
+      setError("Signup failed. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
-    <div className="login-wrapper">
-      <div className="login-form-container">
-        <h2 className="login-title">Create your account</h2>
-        {error && <div className="alert alert-danger">{error}</div>}
-        <Form onSubmit={handleSubmit}>
-          {['name', 'email', 'password', 'correct_password'].map((field) => (
-            <Form.Group className="mb-3" key={field}>
-              <Form.Label>{field === 'correct_password' ? 'Confirm Password' : field[0].toUpperCase() + field.slice(1)}</Form.Label>
-              <Form.Control
-                type={field === 'email' ? 'email' : field === 'name' ? 'text' : 'password'}
-                value={form[field]}
-                onChange={(event) => setForm({ ...form, [field]: event.target.value })}
-                required
-              />
-            </Form.Group>
-          ))}
-          <Button variant="primary" type="submit" className="w-100">Sign Up</Button>
-          <Button variant="primary" type="submit" className="w-100"><Link to ="/admin-signup">Admin Login</Link></Button>
-        </Form>
-        <p className="mt-3 text-center mb-0">
-          Already have an account? <Link to="/login">Sign in</Link>
+    <div className="min-h-screen flex items-center justify-center p-6">
+      <div className="w-full max-w-md">
+        <div className="flex items-center gap-2 mb-8 justify-center">
+          <div className="flex h-9 w-9 items-center justify-center rounded-md bg-primary">
+            <Zap className="h-5 w-5 text-primary-foreground" />
+          </div>
+          <span className="text-xl font-bold">SkillSyncAI</span>
+        </div>
+
+        <h2 className="text-2xl font-bold text-center">Create your account</h2>
+        <p className="text-sm text-muted-foreground text-center mt-1">
+          Already have an account?{" "}
+          <Link to="/login" className="text-primary font-medium hover:underline">
+            Sign in
+          </Link>
         </p>
+
+        <form onSubmit={handleSubmit} className="mt-6 space-y-4">
+          {error && (
+            <div
+              role="alert"
+              className="rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive"
+            >
+              {error}
+            </div>
+          )}
+          <Input
+            id="name"
+            label="Full Name"
+            placeholder="Jane Doe"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            required
+          />
+          <Input
+            id="email"
+            type="email"
+            label="Email Address"
+            placeholder="you@example.com"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+          <Input
+            id="password"
+            type="password"
+            label="Password"
+            placeholder="••••••••"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+          <Input
+            id="confirmPassword"
+            type="password"
+            label="Confirm Password"
+            placeholder="••••••••"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            required
+          />
+          <Button type="submit" variant="default" className="w-full" disabled={loading}>
+            {loading ? "Creating account..." : "Create account"}
+          </Button>
+        </form>
       </div>
     </div>
-  )
+  );
 }
-
-export default Signup
