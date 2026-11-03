@@ -7,6 +7,7 @@ import Skills from '../pages/Skills'
 import AIChat from '../pages/AIChat'
 import NotFound from '../pages/404'
 import Cert from '../pages/Certification'
+import AdminPage from "../pages/Adminpage"
 import Me from  '../pages/me'
 import Project from '../pages/Project'
 import Resume from '../pages/Resume'  
@@ -32,6 +33,7 @@ function App() {
             <Route path="/admin-login" element={<AdminLogin/>}/>
             <Route path="/student-me" element={<Me/>}/>
             <Route path="/ai-chat" element={<AIChat/>}/>
+            <Route path="/admin-page" element = {<AdminPage/>}></Route>
             <Route path="/student-details" element={<StudentDetails/>}/>
               <Route path="/home" element={<Home />} />
               <Route path="/add-project" element={<Project/>}/>

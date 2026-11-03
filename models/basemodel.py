@@ -1,4 +1,4 @@
-from sqlalchemy.orm import declarative_base
+from sqlalchemy.orm import declarative_base,Mapped
 from sqlalchemy import Column, Integer, String, Float, DateTime, ForeignKey, Boolean, LargeBinary, text
 from sqlalchemy.dialects.postgresql import JSONB 
 
@@ -24,7 +24,7 @@ class User(Base):
     uid = Column(Integer,primary_key = True,autoincrement=True)
     name = Column(String(50),nullable=False)
     email = Column(String(50),nullable=False,unique=True)
-    password = Column(String(10000), nullable=True)
+    password = Column(String(1000), nullable=True,unique=True)
     created_at = Column(DateTime, nullable=False, server_default=text("now()"))
 
 
