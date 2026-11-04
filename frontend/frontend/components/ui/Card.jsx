@@ -1,40 +1,72 @@
 import React from "react";
 import { cn } from "../../lib/utils";
 
-export function Card({ className, padding = "default", ...props }) {
-  const paddings = { none: "", sm: "p-3", default: "p-4", lg: "p-6" };
+export default function Card({ className, padding = "md", children, ...props }) {
+  const paddings = {
+    none: "",
+    sm: "p-3",
+    md: "p-4",
+    lg: "p-6",
+  };
+
   return (
     <div
       className={cn(
-        "rounded-lg border border-border bg-card text-card-foreground shadow-sm",
+        "rounded border border-border bg-bg-elevated",
         paddings[padding],
         className
       )}
       {...props}
-    />
+    >
+      {children}
+    </div>
   );
 }
 
-export function CardHeader({ className, ...props }) {
-  return <div className={cn("flex flex-col space-y-1.5 p-4", className)} {...props} />;
-}
-
-export function CardTitle({ className, ...props }) {
+export function CardHeader({ className, children, ...props }) {
   return (
-    <h3 className={cn("text-lg font-semibold leading-none tracking-tight", className)} {...props} />
+    <div className={cn("flex flex-col gap-1", className)} {...props}>
+      {children}
+    </div>
   );
 }
 
-export function CardDescription({ className, ...props }) {
-  return <p className={cn("text-sm text-muted-foreground", className)} {...props} />;
+export function CardTitle({ className, children, ...props }) {
+  return (
+    <h3
+      className={cn("text-sm font-bold uppercase tracking-widest text-fg", className)}
+      {...props}
+    >
+      {children}
+    </h3>
+  );
 }
 
-export function CardContent({ className, ...props }) {
-  return <div className={cn("p-4 pt-0", className)} {...props} />;
+export function CardDescription({ className, children, ...props }) {
+  return (
+    <p className={cn("text-xs text-fg-muted leading-relaxed", className)} {...props}>
+      {children}
+    </p>
+  );
 }
 
-export function CardFooter({ className, ...props }) {
-  return <div className={cn("flex items-center p-4 pt-0", className)} {...props} />;
+export function CardContent({ className, children, ...props }) {
+  return (
+    <div className={cn("mt-3", className)} {...props}>
+      {children}
+    </div>
+  );
 }
 
-export default Card;
+export function CardFooter({ className, children, ...props }) {
+  return (
+    <div className={cn("flex items-center justify-between gap-2 mt-4 pt-3 border-t border-border/50", className)} {...props}>
+      {children}
+    </div>
+  );
+}
+
+
+
+
+export { Card };

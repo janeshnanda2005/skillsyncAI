@@ -5,11 +5,13 @@ import { Topbar } from "./Topbar";
 
 export function AppShell() {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-bg text-fg">
       <Sidebar />
       <div className="md:pl-[240px]">
         <Topbar />
-        <main className="min-h-[calc(100vh-56px)] p-4 md:p-6"><Outlet /></main>
+        <main className="min-h-[calc(100vh-56px)] p-4 md:p-6">
+          <Outlet />
+        </main>
       </div>
     </div>
   );

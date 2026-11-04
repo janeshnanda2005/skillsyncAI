@@ -1,32 +1,27 @@
 import React from "react";
 import { cn } from "../../lib/utils";
 
-export function Input({ className, label, error, hint, id, ...props }) {
+export default function Input({ className, label, ...props }) {
   return (
-    <div className="space-y-1.5">
+    <div className={cn("flex flex-col gap-1.5", className)}>
       {label && (
-        <label htmlFor={id} className="text-sm font-medium leading-none">
+        <label className="text-xs font-bold uppercase tracking-widest text-fg-subtle">
           {label}
         </label>
       )}
       <input
-        id={id}
         className={cn(
-          "flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm",
-          "ring-offset-background transition-colors",
-          "file:border-0 file:bg-transparent file:text-sm file:font-medium",
-          "placeholder:text-muted-foreground",
-          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
-          "disabled:cursor-not-allowed disabled:opacity-50",
-          error && "border-destructive focus-visible:ring-destructive",
+          "h-10 w-full rounded bg-bg-elevated border border-border px-3 py-2 text-sm text-fg",
+          "placeholder:text-fg-subtle/60",
+          "focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-border-strong",
+          "disabled:opacity-50 disabled:cursor-not-allowed",
           className
         )}
         {...props}
       />
-      {hint && !error && <p className="text-xs text-muted-foreground">{hint}</p>}
-      {error && <p className="text-xs text-destructive">{error}</p>}
     </div>
   );
 }
 
-export default Input;
+
+export { Input };

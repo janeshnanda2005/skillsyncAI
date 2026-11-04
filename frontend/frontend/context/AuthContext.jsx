@@ -7,6 +7,7 @@ const AuthContext = createContext(null);
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -21,11 +22,13 @@ export function AuthProvider({ children }) {
         .then((data) => {
           if (!mounted) return;
           setUser(data.user || data);
+          setError(null);
         })
-        .catch(() => {
+        .catch((err) => {
           if (!mounted) return;
           localStorage.removeItem("skill-sync-token");
           setUser(null);
+          setError(err.response?.data?.detail || "Session expired. Please log in again.");
         })
         .finally(() => {
           if (!mounted) return;
@@ -38,15 +41,42 @@ export function AuthProvider({ children }) {
   }, []);
 
   const login = async (email, password) => {
-    const data = await loginUser(email, password);
-    localStorage.setItem("skill-sync-token", data.access_token);
-    setUser(data);
+    setError(null);
+    try {
+      const data = await loginUser(email, password);
+      localStorage.setItem("skill-sync-token", data.access_token);
+      setUser(data);
+      navigate("/dashboard");
+      return data;
+    } catch (err) {
+      const msg = err.response?.data?.detail || "Login failed. Please check your credentials.";
+      setError(msg);
+      throw err;
+    }
+  };
+
+  const demoLogin = () => {
+    setError(null);
+    const demoUser = {
+      sub: "demo@example.com",
+      email: "demo@example.com",
+      name: "Demo Student",
+    };
+    localStorage.setItem("skill-sync-token", "demo-token-local");
+    setUser(demoUser);
     navigate("/dashboard");
   };
 
   const signup = async (name, email, password, correct_password) => {
-    await signupUser(name, email, password, correct_password);
-    navigate("/login");
+    setError(null);
+    try {
+      await signupUser(name, email, password, correct_password);
+      navigate("/login");
+    } catch (err) {
+      const msg = err.response?.data?.detail || "Signup failed. Please try again.";
+      setError(msg);
+      throw err;
+    }
   };
 
   const logout = async () => {
@@ -55,11 +85,12 @@ export function AuthProvider({ children }) {
     } catch {}
     localStorage.removeItem("skill-sync-token");
     setUser(null);
+    setError(null);
     navigate("/login");
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, signup, logout, loading }}>
+    <AuthContext.Provider value={{ user, login, signup, logout, demoLogin, loading, error }}>
       {children}
     </AuthContext.Provider>
   );

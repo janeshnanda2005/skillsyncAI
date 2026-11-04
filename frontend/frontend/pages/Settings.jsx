@@ -10,7 +10,7 @@ import { logoutUser } from "../api/index";
 export default function Settings() {
   const user = useRequireAuth();
   const email = user?.sub || user?.email || "";
-  const name = user?.name || email.split("@")[0] || "Student";
+  const name = user?.name || email.split("@")[0] || "CREW";
 
   const handleLogout = async () => {
     try { await logoutUser(); } catch {}
@@ -18,10 +18,10 @@ export default function Settings() {
   };
 
   return (
-    <div className="space-y-6 p-4">
+    <div className="space-y-8 p-4">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight">Settings</h1>
-        <p className="text-sm text-muted-foreground mt-1">
+        <h1 className="text-2xl font-bold uppercase tracking-widest text-fg">Systems</h1>
+        <p className="text-sm text-fg-muted mt-1">
           Manage your account and application preferences.
         </p>
       </div>
@@ -47,23 +47,23 @@ export default function Settings() {
               defaultValue={email}
               disabled
             />
-            <p className="text-xs text-muted-foreground">
+            <p className="text-xs text-fg-muted">
               Account details are synced from the authentication database.
             </p>
             <Separator />
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="flex h-9 w-9 items-center justify-center rounded-md bg-card">
-                  <Moon className="h-5 w-5 text-muted-foreground" />
-                  <Sun className="absolute h-5 w-5 text-primary" />
+                <div className="flex h-9 w-9 items-center justify-center rounded border border-border bg-black">
+                  <Moon className="h-5 w-5 text-fg-muted" />
+                  <Sun className="absolute h-5 w-5 text-fg" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium">Dark Mode</p>
-                  <p className="text-xs text-muted-foreground">Toggle dark theme</p>
+                  <p className="text-sm font-bold uppercase tracking-widest text-fg">Dark Mode</p>
+                  <p className="text-[10px] text-fg-muted">Toggle dark theme</p>
                 </div>
               </div>
-              <button className="w-14 h-7 rounded-full bg-primary/10 relative transition-colors peer">
-                <span className="absolute left-1 top-1 h-5 w-5 rounded-full bg-background shadow-sm transition-all peer-checked:translate-x-4 peer-checked:bg-primary peer:ring-2 peer:ring-transparent peer-checked:ring-offset-2" />
+              <button className="w-14 h-7 rounded-full bg-fg/10 relative transition-colors peer">
+                <span className="absolute left-1 top-1 h-5 w-5 rounded-full bg-black shadow-sm transition-all peer-checked:translate-x-4 peer-checked:bg-fg peer:ring-2 peer:ring-transparent peer-checked:ring-offset-2" />
               </button>
             </div>
           </CardContent>
@@ -75,10 +75,10 @@ export default function Settings() {
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex items-center gap-3">
-              <User className="h-5 w-5 text-muted-foreground" />
+              <User className="h-5 w-5 text-fg-muted" />
               <div>
-                <p className="text-sm font-medium">{email}</p>
-                <p className="text-xs text-muted-foreground">Student account</p>
+                <p className="text-sm font-bold text-fg">{email}</p>
+                <p className="text-[10px] text-fg-muted">Crew Member</p>
               </div>
             </div>
             <Button variant="outline" className="w-full" onClick={() => {}} disabled>

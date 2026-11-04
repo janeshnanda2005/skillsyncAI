@@ -15,6 +15,19 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
+api.interceptors.response.use(
+  (res) => res,
+  (err) => {
+    if (err.response && err.response.status === 401) {
+      localStorage.removeItem("skill-sync-token");
+      if (window.location.pathname !== "/login") {
+        window.location.href = "/login";
+      }
+    }
+    return Promise.reject(err);
+  }
+);
+
 // ─── Auth ────────────────────────────────────────────────────────────────
 export async function loginUser(email, password) {
   const response = await api.post("/auth/login", { email, password });
