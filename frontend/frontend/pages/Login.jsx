@@ -4,7 +4,7 @@ import { useAuth } from "./../context/AuthContext";
 import { Button } from "./../components/ui/Button";
 import { Input } from "./../components/ui/Input";
 import { Zap } from "lucide-react";
-import { loginUser } from "./../api/auth";
+import { loginUser } from "./../api/index";
 
 export default function Login() {
   const { login } = useAuth();

@@ -10,6 +10,7 @@ import Opportunities from "../pages/Opportunities";
 import Resume from "../pages/Resume";
 import Assessment from "../pages/Assessment";
 import Analytics from "../pages/Analytics";
+import AIChat from "../pages/AIChat";
 import Settings from "../pages/Settings";
 import Help from "../pages/Help";
 import Landing from "../pages/Landing";
@@ -17,9 +18,9 @@ import "./App.css";
 
 function App() {
   return (
-    <ThemeProvider>
-      <AuthProvider>
-        <BrowserRouter>
+    <BrowserRouter>
+      <ThemeProvider>
+        <AuthProvider>
           <Routes>
             <Route path="/" element={<Landing />} />
             <Route path="/login" element={<Login />} />
@@ -31,14 +32,15 @@ function App() {
               <Route path="/resume" element={<Resume />} />
               <Route path="/assessment" element={<Assessment />} />
               <Route path="/analytics" element={<Analytics />} />
+              <Route path="/ai-chat" element={<AIChat />} />
               <Route path="/settings" element={<Settings />} />
               <Route path="/help" element={<Help />} />
             </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>
-        </BrowserRouter>
-      </AuthProvider>
-    </ThemeProvider>
+        </AuthProvider>
+      </ThemeProvider>
+    </BrowserRouter>
   );
 }
 

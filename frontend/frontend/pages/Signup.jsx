@@ -28,11 +28,10 @@ export default function Signup() {
     }
     setLoading(true);
     try {
-      const userData = { name, email, access_token: "mock-token-" + Date.now() };
-      signup(userData);
-      navigate("/dashboard");
+      await signup(name, email, password, confirmPassword);
+      navigate("/login");
     } catch (err) {
-      setError("Signup failed. Please try again.");
+      setError(err.response?.data?.detail || "Signup failed. Please try again.");
     } finally {
       setLoading(false);
     }

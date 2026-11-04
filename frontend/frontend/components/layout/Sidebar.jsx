@@ -5,7 +5,7 @@ import { useAuth } from "../../context/AuthContext";
 import { ThemeToggle } from "../../context/ThemeContext";
 import { Avatar } from "../ui/Avatar";
 import { Button } from "../ui/Button";
-import { LayoutDashboard, User, Briefcase, FileText, GraduationCap, BarChart3, Settings, HelpCircle, Menu, X, Zap, LogOut } from "lucide-react";
+import { LayoutDashboard, User, Briefcase, FileText, GraduationCap, BarChart3, Settings, HelpCircle, Menu, X, Zap, LogOut, Brain } from "lucide-react";
 
 const workspaceNav = [
   { label: "Overview", icon: LayoutDashboard, to: "/dashboard" },
@@ -14,6 +14,7 @@ const workspaceNav = [
   { label: "Resume Workspace", icon: FileText, to: "/resume" },
   { label: "Skill Assessment", icon: GraduationCap, to: "/assessment" },
   { label: "Analytics", icon: BarChart3, to: "/analytics" },
+  { label: "AI Chat", icon: Brain, to: "/ai-chat" },
 ];
 
 const preferencesNav = [

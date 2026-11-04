@@ -1,121 +1,158 @@
-import {useState,useEffect,useRef} from "react"
-import { useAuth } from "../components/useAuth";
-import axios from "axios";
-import "./AIChat.css";
+import React, { useState, useEffect, useRef } from "react";
+import { useAuth } from "../context/AuthContext";
+import { aiChat } from "../api/index";
+import { Card, CardHeader, CardTitle, CardContent } from "../components/ui/Card";
+import { Button } from "../components/ui/Button";
+import { Input } from "../components/ui/Input";
+import { EmptyState } from "../components/ui/EmptyState";
+import AtsScoreCalculator from "../components/ui/AtsScoreCalculator";
+import { Send, MessageCircle, Zap, Brain } from "lucide-react";
 
+export default function AIChat() {
+  const { user } = useAuth();
+  const [input, setInput] = useState("");
+  const [messages, setMessages] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const messagesEndRef = useRef(null);
 
-function AIChat(){
+  const useEffectScroll = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
 
-    const { user } = useAuth();
-    const [input,Setinput] = useState("");
-    const [messages,Setmessages] = useState([]);
-    const [loading,Setloading] = useState(false);
-    const messagesEndRef = useRef(null);
+  useEffect(() => {
+    useEffectScroll();
+  }, [messages, loading]);
 
-    const API_URL = import.meta.env.VITE_API_URL || "https://skillsyncai-d5pk.onrender.com"
-
-    const ScrollBottom = () => {
-        messagesEndRef.current?.scrollIntoView({behavior:'smooth'});
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!input.trim() || loading) return;
+    if (!user) {
+      setMessages((prev) => [...prev, {
+        role: "assistant",
+        content: "Please log in to your account to use AI chat.",
+      }]);
+      return;
     }
 
-    useEffect(() => {
-        ScrollBottom();
-    },[messages,loading]);
+    const userMessage = { role: "user", content: input };
+    setMessages((prev) => [...prev, userMessage]);
+    setInput("");
+    setLoading(true);
 
-
-    const handleSubmit = async(event) => {
-        event.preventDefault();
-        if(!input || loading) return;
-        if(!user.access_token){
-            Setmessages((prev) => [...prev,{
-                role:'assistant',
-                content:'Please Login to your account to use AI'
-            }])
-            return;
-        }
-
-        const usermessage = {role:'user',content:input};
-        Setmessages((prev) => [...prev,usermessage]);
-        Setinput("");
-        Setloading(true);
-
-
-        try{
-            const response = await axios.post(
-                `${API_URL}/ai/ai-chat`,
-                {msg: usermessage.content},
-                {
-                    headers: {
-                        Authorization: `Bearer ${user.access_token}`
-                    }
-                }
-            )
-            Setmessages((prev) => [...prev,{role:'assistant',content:response.data}]);
-            Setinput("");
-        }
-        catch(err){
-            Setmessages((prev)=> [...prev,{role:"assistant",content:err.response?.data?.detail || err.message}])
-        }
-        finally{
-            Setloading(false);
-        }
+    try {
+      const response = await aiChat(input);
+      setMessages((prev) => [...prev, { role: "assistant", content: response }]);
+      setInput("");
+    } catch (err) {
+      setMessages((prev) => [...prev, {
+        role: "assistant",
+        content: err.response?.data?.detail || err.message || "AI chat failed. Please try again.",
+      }]);
+    } finally {
+      setLoading(false);
     }
+  };
 
-
-    return (
-        <>
-        <div className="ai-chat">
-        <div className="ai-chat__messages">
-            {messages.map((msg, index) => (
-            <div
-                key={index}
-                className={`ai-chat__row ${msg.role === 'user' ? 'ai-chat__row--user' : 'ai-chat__row--assistant'}`}
-            >
-                <div
-                className={`ai-chat__message ${
-                    msg.role === 'user'
-                    ? 'ai-chat__message--user'
-                    : 'ai-chat__message--assistant'
-                }`}
-                >
-                {msg.content}
-                </div>
+  return (
+    <div className="flex flex-col lg:flex-row gap-6 h-[calc(100vh-140px)]">
+      {/* AI Chat Section */}
+      <div className="flex-1 flex flex-col">
+        <Card className="flex-1 min-w-0">
+          <CardHeader className="flex flex-row items-center justify-between pb-2">
+            <div className="flex items-center gap-2">
+              <MessageCircle className="h-4 w-4 text-primary" />
+              <CardTitle className="text-sm font-semibold">AI Resume Chat</CardTitle>
             </div>
+            <Badge variant={user ? "success" : "destructive"} className="text-xs">
+              {user ? "Logged in" : "Login required"}
+            </Badge>
+          </CardHeader>
+          <CardContent className="flex-1 min-h-0 overflow-y-auto space-y-3 pr-2">
+            {messages.length === 0 && (
+              <EmptyState
+                icon={<Zap className="h-6 w-6 text-muted-foreground" />}
+                title="Start a conversation"
+                description="Ask about your resume, skills, or career readiness. Your resume must be uploaded first."
+                className="h-full flex-col justify-center"
+              />
+            )}
+            {messages.map((msg, index) => (
+              <div
+                key={index}
+                className={`flex ${
+                  msg.role === "user" ? "justify-end" : "justify-start"
+                }`}
+              >
+                <div
+                  className={`max-w-[85%] rounded-lg p-3 ${
+                    msg.role === "user"
+                      ? "bg-primary text-primary-foreground"
+                      : "bg-muted text-foreground border border-border"
+                  }`}
+                >
+                  {msg.content}
+                </div>
+              </div>
             ))}
             {loading && (
-            <div className="ai-chat__row ai-chat__row--assistant">
-                <div className="ai-chat__message ai-chat__message--assistant ai-chat__message--loading">
-                Thinking and retrieving context...
+              <div className="flex justify-start">
+                <div className="bg-muted text-foreground border border-border rounded-lg p-3 text-sm">
+                  Thinking and retrieving context from your resume...
                 </div>
-            </div>
+              </div>
             )}
             <div ref={messagesEndRef} />
+          </CardContent>
+          <form onSubmit={handleSubmit} className="p-3 border-t border-border">
+            <div className="flex gap-2">
+              <Input
+                id="aiInput"
+                type="text"
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                placeholder="Ask about your resume..."
+                className="flex-1"
+                disabled={loading || !user}
+              />
+              <Button
+                type="submit"
+                disabled={loading || !user || !input.trim()}
+                className="h-9 px-4"
+              >
+                <Send className="h-4 w-4" />
+              </Button>
+            </div>
+            {!user && (
+              <p className="text-xs text-muted-foreground mt-2 text-center">
+                Please log in to use AI chat.
+              </p>
+            )}
+          </form>
+        </Card>
+      </div>
+
+      {/* ATS Score Calculator beside chat */}
+      <div className="w-full lg:w-[420px] flex-shrink-0">
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Brain className="h-4 w-4" />
+              ATS Score Calculator
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <AtsScoreCalculator />
+          </CardContent>
+        </Card>
+        <div className="mt-4 p-4 rounded-lg bg-muted/50 border border-border">
+          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">
+            How it works
+          </p>
+          <p className="text-xs text-muted-foreground leading-relaxed">
+            Paste a job description and your resume text to get a real-time ATS match score. The calculator compares keywords between both texts and shows matched and missing keywords.
+          </p>
         </div>
-
-        <form onSubmit={handleSubmit} className="ai-chat__form">
-            <input
-            type="text"
-            value={input}
-            onChange={(e) => Setinput(e.target.value)}
-            placeholder="Type your question here..."
-              className="ai-chat__input"
-            />
-            <button
-            type="submit"
-            disabled={loading}
-              className="ai-chat__send"
-            >
-            Send
-            </button>
-        </form>
-        <footer style={{textAlign:'center',marginTop:'10px'}}>
-            <p>Powered by SkillsyncAI the data will be lost when you move from this page</p>
-        </footer>
-        </div>      
-        
-        
-    </>)
-
-};
-
-export default AIChat;
+      </div>
+    </div>
+  );
+}
