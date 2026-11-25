@@ -33,6 +33,7 @@ app = FastAPI(
 
 cors_origins = [
     "http://localhost:5173",
+    "http://localhost:5175",
     "https://skillsyncai-1-dx50.onrender.com"
 ]
 

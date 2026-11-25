@@ -47,7 +47,7 @@ export default function Landing() {
       {/* Hero Section */}
       <section className="relative z-10 flex flex-col items-start justify-center min-h-[70vh] px-6 pt-20 pb-12 max-w-7xl mx-auto">
         <Reveal className="mb-8">
-          <span className="inline-flex items-center gap-1.5 rounded border border-border px-2.5 py-0.5 text-[10px] font-bold uppercase text-glow-mars border-glow-mars/30 bg-glow-mars/10">
+          <span className="inline-flex items-center gap-1.5 rounded border border-[#e8eaf0] px-2.5 py-0.5 text-[#d9703f] text-[10px] font-bold uppercase border-[#d9703f]/30 bg-[#d9703f]/10">
             NEW FOR COLLEGES &amp; PLACEMENT TEAMS
           </span>
         </Reveal>

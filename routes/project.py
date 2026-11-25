@@ -18,8 +18,6 @@ from schemas.pydantic_models import (
 
 router = APIRouter()
 
-
-
 def get_student_by_user(current_user:dict,db:Session) -> StudentModel:
     email = current_user.get("sub")
     student = db.query(StudentModel).filter(StudentModel.email == email).first()
@@ -79,21 +77,21 @@ def update_project(
     current_user: dict = Depends(get_current_user),
 ):
     """Update a project. Only the owning student can update."""
-    student = get_student_by_user(current_user, db)
-
+    student - get_student_by_user(current_user,db)
     project = db.query(ProjectModel).filter(
         ProjectModel.pid == project_id,
         ProjectModel.sid == student.sid,
     ).first()
+
     if not project:
-        raise HTTPException(status_code=404, detail="Project not found or not yours to update")
-
+        raise HTTPException(status_code=404,detail="Project is not found")
     update_data = payload.model_dump(exclude_unset=True)
-    for key, value in update_data.items():
-        setattr(project, key, value)    
-
+    for key,value in update_data.items():
+        settattr(project,key,value)
+    
     db.commit()
     db.refresh(project)
+
     return project
 
 
